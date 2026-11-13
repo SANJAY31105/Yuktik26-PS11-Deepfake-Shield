@@ -85,8 +85,6 @@
         <a href="/guide" target="_blank" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white font-bold border border-cyan-500/50 flex items-center gap-1.5 transition-colors">
           <span>📖 Evaluation Guide (PDF)</span>
         </a>
-          <span>📥 Team & Jury PDF</span>
-        </a>
         <div class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 hidden md:block">
           <span class="text-slate-400">Latency:</span>
           <strong class="text-emerald-400">&lt; 25 ms</strong>
@@ -188,11 +186,17 @@
               <button onclick="testPreloadedMedia('image', '/data/ai_generated_synthetic_image.jpg', 'ai_generated_synthetic_image.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white text-xs font-bold shadow flex items-center gap-2">
                 <span>⚡ Test AI Synthetic Image (Fake)</span>
               </button>
+              <button onclick="testPreloadedMedia('image', '/data/fake_taj_mahal_collapse.jpg', 'fake_taj_mahal_collapse.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>⚡ Test Taj Mahal AI Collapse (Fake)</span>
+              </button>
               <button onclick="testPreloadedMedia('image', '/data/kerala_flood_reused_photo.jpg', 'kerala_flood_reused_photo.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 text-white text-xs font-bold shadow flex items-center gap-2">
                 <span>⚡ Test Reused Flood Photo (Misleading)</span>
               </button>
               <button onclick="testPreloadedMedia('image', '/data/real_dam_photo.jpg', 'real_dam_photo.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white text-xs font-bold shadow flex items-center gap-2">
                 <span>🛡️ Test Real Dam Photo (Authentic)</span>
+              </button>
+              <button onclick="testPreloadedMedia('image', '/data/real_taj_mahal.jpg', 'real_taj_mahal.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>🛡️ Test Real Taj Mahal (Authentic)</span>
               </button>
               <label class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer flex items-center gap-2">
                 <span>📁 Upload JPG/PNG</span>
@@ -279,6 +283,9 @@
             </button>
             <button onclick="setClaimInput('Nagarjuna Sagar reservoir water level is currently at 534.80 feet (44.2% storage capacity). All crest gates remain closed and secure.')" class="text-xs px-3 py-1.5 rounded-xl bg-emerald-950 hover:bg-emerald-900 text-emerald-300 font-bold border border-emerald-700">
               🛡️ Real: CWC Dam Safe Telemetry
+            </button>
+            <button onclick="setClaimInput('BREAKING NEWS: Taj Mahal has collapsed in a massive catastrophe! Agra authorities declare state of emergency!')" class="text-xs px-3 py-1.5 rounded-xl bg-purple-950/80 hover:bg-purple-900 text-purple-300 font-bold border border-purple-800">
+              ❌ Fake: Taj Mahal Collapse
             </button>
           </div>
 
