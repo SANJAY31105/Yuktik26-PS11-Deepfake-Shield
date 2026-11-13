@@ -142,11 +142,14 @@
               Upload any recorded voice note, or click the button below to load the simulated evacuation voice clone of the District Collector:
             </p>
             <div class="flex flex-wrap gap-2">
-              <button onclick="testPreloadedMedia('audio')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white text-xs font-bold shadow flex items-center gap-2">
-                <span>⚡ Test Cloned Collector Audio</span>
+              <button onclick="testPreloadedMedia('audio', '/data/collector_evacuation_voice_clone.wav', 'collector_evacuation_voice_clone.wav')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>⚡ Test AI Cloned Voice (Fake)</span>
+              </button>
+              <button onclick="testPreloadedMedia('audio', '/data/authentic_human_speech.wav', 'authentic_human_speech.wav')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>🛡️ Test Authentic Voice (Real)</span>
               </button>
               <label class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer flex items-center gap-2">
-                <span>📁 Upload Your Own WAV/MP3</span>
+                <span>📁 Upload WAV/MP3</span>
                 <input type="file" accept="audio/*" class="hidden" onchange="uploadAndAnalyze(event, 'audio')">
               </label>
             </div>
@@ -180,11 +183,14 @@
               Upload any disaster photo, or click below to test the viral Nagarjuna Sagar Dam collapse photo:
             </p>
             <div class="flex flex-wrap gap-2">
-              <button onclick="testPreloadedMedia('image')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white text-xs font-bold shadow flex items-center gap-2">
-                <span>⚡ Test Reused Dam Flood Photo</span>
+              <button onclick="testPreloadedMedia('image', '/data/ai_generated_synthetic_image.jpg', 'ai_generated_synthetic_image.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>⚡ Test AI Synthetic Image (Fake)</span>
+              </button>
+              <button onclick="testPreloadedMedia('image', '/data/kerala_flood_reused_photo.jpg', 'kerala_flood_reused_photo.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>⚡ Test Reused Flood Photo (Misleading)</span>
               </button>
               <label class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer flex items-center gap-2">
-                <span>📁 Upload Your Own JPG/PNG</span>
+                <span>📁 Upload JPG/PNG</span>
                 <input type="file" accept="image/*" class="hidden" onchange="uploadAndAnalyze(event, 'image')">
               </label>
             </div>
@@ -257,14 +263,17 @@
           <p class="text-xs text-slate-300">Click any one-click sample or type your own rumor to verify against CWC/NDMA government data:</p>
           
           <div class="flex flex-wrap gap-2">
-            <button onclick="setClaimInput('URGENT: Nagarjuna Sagar Dam collapsed at 10 AM! Emergency evacuation ordered by Collector!')" class="text-xs px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold border border-cyan-800">
-              🇬🇧 English Dam Collapse
+            <button onclick="setClaimInput('URGENT: Nagarjuna Sagar Dam collapsed at 10 AM! Emergency evacuation ordered by Collector!')" class="text-xs px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-300 font-bold border border-red-800">
+              ❌ Fake: English Dam Collapse
             </button>
-            <button onclick="setClaimInput('बड़ा बांध टूटा! शहर में जल प्रलय की चेतावनी, तुरंत सुरक्षित स्थान पर पहुंचे!')" class="text-xs px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold border border-amber-800">
-              🇮🇳 Hindi: बड़ा बांध टूटा
+            <button onclick="setClaimInput('बड़ा बांध टूटा! शहर में जल प्रलय की चेतावनी, तुरंत सुरक्षित स्थान पर पहुंचे!')" class="text-xs px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-amber-300 font-bold border border-amber-800">
+              ❌ Fake: Hindi बड़ा बांध टूटा
             </button>
-            <button onclick="setClaimInput('డ్యామ్ కొట్టుకుపోయింది! కలెక్టర్ అత్యవసర ఖాళీ ఆదేశాలు జారీ చేశారు!')" class="text-xs px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 font-bold border border-emerald-800">
-              🇮🇳 Telugu: డ్యామ్ కొట్టుకుపోయింది
+            <button onclick="setClaimInput('డ్యామ్ కొట్టుకుపోయింది! కలెక్టర్ అత్యవసర ఖాళీ ఆదేశాలు జారీ చేశారు!')" class="text-xs px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-rose-300 font-bold border border-rose-800">
+              ❌ Fake: Telugu డ్యామ్ కొట్టుకుపోయింది
+            </button>
+            <button onclick="setClaimInput('Nagarjuna Sagar reservoir water level is currently at 534.80 feet (44.2% storage capacity). All crest gates remain closed and secure.')" class="text-xs px-3 py-1.5 rounded-xl bg-emerald-950 hover:bg-emerald-900 text-emerald-300 font-bold border border-emerald-700">
+              🛡️ Real: CWC Dam Safe Telemetry
             </button>
           </div>
 
@@ -473,21 +482,28 @@
     }
 
     // Pre-loaded Media Testing
-    async function testPreloadedMedia(type) {
-      let url = '';
-      let filename = '';
+    async function testPreloadedMedia(type, customUrl, customFilename) {
+      let url = customUrl || '';
+      let filename = customFilename || '';
       let mediaType = type;
+      if (!url) {
+        if (type === 'audio') {
+          url = '/data/collector_evacuation_voice_clone.wav';
+          filename = 'collector_evacuation_voice_clone.wav';
+        } else if (type === 'image') {
+          url = '/data/ai_generated_synthetic_image.jpg';
+          filename = 'ai_generated_synthetic_image.jpg';
+        } else if (type === 'video') {
+          url = '/data/official_announcement_fake.mp4';
+          filename = 'official_announcement_fake.mp4';
+        }
+      }
       if (type === 'audio') {
-        url = '/data/collector_evacuation_voice_clone.wav';
-        filename = 'collector_evacuation_voice_clone.wav';
         const a = document.getElementById('audio-player-sample');
-        if (a) a.play().catch(() => {});
-      } else if (type === 'image') {
-        url = '/data/kerala_flood_reused_photo.jpg';
-        filename = 'kerala_flood_reused_photo.jpg';
-      } else if (type === 'video') {
-        url = '/data/official_announcement_fake.mp4';
-        filename = 'official_announcement_fake.mp4';
+        if (a) {
+          a.src = url;
+          a.play().catch(() => {});
+        }
       }
 
       try {

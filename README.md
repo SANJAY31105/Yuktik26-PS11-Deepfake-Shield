@@ -3,6 +3,18 @@
 
 Department of CSE (AI&ML), Keshav Memorial Institute of Technology (KMIT), Hyderabad.
 
+[![GitHub Repo](https://img.shields.io/badge/GitHub-SANJAY31105%2FYuktik26--PS11--Deepfake--Shield-blue?logo=github)](https://github.com/SANJAY31105/Yuktik26-PS11-Deepfake-Shield)
+[![Tests Passing](https://img.shields.io/badge/Verification_Suite-10%2F10_Passing-brightgreen)](backend/test_suite.py)
+[![Architecture Docs](https://img.shields.io/badge/Specification-Deep_Architecture_Doc-blueviolet)](docs/TECHNICAL_ARCHITECTURE.md)
+[![Jury Guide](https://img.shields.io/badge/Defense_Guide-7--Page_PDF_Manual-red)](Yuktik26_PS11_Team_WARRIORS_Comprehensive_Guide_and_Jury_QA.pdf)
+
+---
+
+### 📚 Essential Technical Documentation:
+- **[📖 Comprehensive Technical Architecture & Engineering Specification](docs/TECHNICAL_ARCHITECTURE.md)** (Full system topology, mathematical formulas, DSP acoustic forensics, Vision Transformer attention, RAG knowledge graph, and Louvain modularity).
+- **[📄 7-Page Team Defense Guide & Jury Q&A Manual (PDF)](Yuktik26_PS11_Team_WARRIORS_Comprehensive_Guide_and_Jury_QA.pdf)** (Printable handbook with 20 high-frequency defense questions, 2-minute pitch script, and scoring rubric strategy).
+- **[⚡ Interactive Web Dashboard](http://localhost:8000)** (5-tab live AI lab with one-click "2-Min Judge Demo" and Police FIR generator).
+
 ---
 
 ## 📌 Executive Summary
