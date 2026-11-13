@@ -18,3 +18,4 @@
   -> Expected Verdict: CONTRADICTED (92.1%)
 - REAL Claim (EN) : "Nagarjuna Sagar reservoir water level is currently at 534.80 feet (44.2% storage capacity). All crest gates remain closed and secure."
   -> Expected Verdict: VERIFIED (91.7%)
+

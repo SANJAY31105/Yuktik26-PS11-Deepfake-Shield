@@ -13,3 +13,4 @@
   -> Expected Verdict: CONTRADICTED
 - REAL Claim (EN) : "Reserve Bank of India clarifies that all scheduled commercial bank capital reserves are safe and liquidity is fully maintained."
   -> Expected Verdict: VERIFIED
+

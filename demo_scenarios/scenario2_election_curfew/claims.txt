@@ -13,3 +13,4 @@
   -> Expected Verdict: CONTRADICTED
 - REAL Claim (EN) : "Election Commission confirms peaceful polling operations across all districts with normal security protocols."
   -> Expected Verdict: VERIFIED
+

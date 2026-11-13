@@ -1,0 +1,13 @@
+# FABRICATED / FAKE MISINFORMATION RUMORS (Copy-paste any of these into Tab 4 Text Verifier)
+
+1. English (Dam Collapse Hoax):
+"URGENT: Nagarjuna Sagar Dam collapsed at 10 AM! Emergency evacuation ordered by Collector!"
+-> VERDICT: CONTRADICTED (92.7%)
+
+2. Hindi (Devanagari Dam Breach):
+"बड़ा बांध टूटा! शहर में जल प्रलय की चेतावनी, तुरंत सुरक्षित स्थान पर पहुंचे!"
+-> VERDICT: CONTRADICTED (92.0%)
+
+3. Telugu (Regional Panic Rumor):
+"డ్యామ్ కొట్టుకుపోయింది! కలెక్టర్ అత్యవసర ఖాళీ ఆదేశాలు జారీ చేశారు!"
+-> VERDICT: CONTRADICTED (92.1%)

@@ -43,3 +43,4 @@ If the evaluator asks: *"Why did a random image or microphone recording get flag
 - **Root Cause**: The model is trained on studio-quality speech (In-the-Wild & ASVspoof benchmarks at 16 kHz).
 - **Why Live Mic Recordings fail**: Speaking close to a laptop or phone microphone creates **digital clipping, ambient room reverb, and plosive distortion** (e.g. saying *"Taj"* or *"Destroyed"* into a cheap mic creates high-frequency acoustic spikes). The model misinterprets this microphone noise as neural vocoder phase artifacts.
 - **Our Engineering Innovation**: We compute **subband Spectral Flatness (4–8 kHz)** and **Zero-Crossing Rate (ZCR) variance** to physically inspect vocoder hiss and vocal cord micro-tremors, rather than treating the neural network as an unquestioned black box.
+
