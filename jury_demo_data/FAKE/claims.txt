@@ -11,3 +11,4 @@
 3. Telugu (Regional Panic Rumor):
 "డ్యామ్ కొట్టుకుపోయింది! కలెక్టర్ అత్యవసర ఖాళీ ఆదేశాలు జారీ చేశారు!"
 -> VERDICT: CONTRADICTED (92.1%)
+
