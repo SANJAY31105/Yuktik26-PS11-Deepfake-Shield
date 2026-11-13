@@ -25,8 +25,8 @@ export default function App() {
     <div className="min-h-screen bg-slate-950 text-slate-100 p-8 font-sans">
       <header className="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
         <div>
-          <h1 className="text-2xl font-black tracking-wide text-white">YUKTIK ’26 · TEAM WARRIORS</h1>
-          <p className="text-sm text-slate-400">PS11 — Real-Time Multimodal Deepfake & CIB Intelligence Platform</p>
+          <h1 className="text-2xl font-black tracking-wide text-white">SatyaShield AI · Real-Time Threat Intelligence</h1>
+          <p className="text-sm text-slate-400">Autonomous Multimodal Deepfake & Disinformation Defense Platform</p>
         </div>
         <button
           onClick={fetchIncident}

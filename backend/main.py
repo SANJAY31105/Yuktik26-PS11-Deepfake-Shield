@@ -1,9 +1,9 @@
 import os
 
 """
-PS11 — Real-Time Multimodal Deepfake Detection Platform
+SatyaShield AI — Real-Time Multimodal Deepfake & Disinformation Defense Platform
 
-FastAPI application entry point.
+FastAPI enterprise application entry point.
 Sets up CORS, includes all API routers, provides health checks,
 and exposes WebSocket endpoints for real-time alerts.
 """
@@ -28,12 +28,12 @@ DATA_DIR.mkdir(exist_ok=True, parents=True)
 # ── App setup ─────────────────────────────────────────────────────────────────
 
 app = FastAPI(
-    title="PS11 — Real-Time Multimodal Deepfake Detection",
+    title="SatyaShield AI — Real-Time Multimodal Deepfake Defense Platform",
     description=(
-        "A comprehensive platform for detecting deepfakes, misinformation, "
-        "and coordinated inauthentic behavior across images, video, audio, and text."
+        "Autonomous enterprise platform for detecting deepfakes, synthetic media, "
+        "and coordinated inauthentic behavior across images, video, audio, and multilingual claims."
     ),
-    version="1.0.0",
+    version="2.5.0",
     docs_url="/docs",
     redoc_url="/redoc",
 )
