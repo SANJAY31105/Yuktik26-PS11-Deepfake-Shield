@@ -76,8 +76,8 @@
 
       <!-- Action Buttons & Quick Metrics -->
       <div class="flex flex-wrap items-center gap-2.5 text-xs font-mono">
-        <button onclick="startJudgePitchTour()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs shadow-lg shadow-orange-500/25 flex items-center gap-1.5 transition-transform hover:scale-105">
-          <span>⚡ Live Threat Simulation</span>
+        <button onclick="openThreatSimulator()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 hover:from-red-500 hover:to-rose-500 text-white font-black text-xs shadow-lg shadow-red-600/30 flex items-center gap-1.5 transition-transform hover:scale-105">
+          <span>⚡ Live Attack & Defense Simulator</span>
         </button>
         <button onclick="openDispatchModal()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold border border-slate-700 flex items-center gap-1.5 transition-colors">
           <span>📄 Police FIR Dispatch</span>
@@ -893,57 +893,347 @@
       }
     }
 
-    function nextPitchStep() {
-      if (currentPitchIndex < pitchSteps.length - 1) {
-        currentPitchIndex++;
-        renderPitchStep();
+    // ================= REAL-TIME THREAT & DEFENSE SIMULATOR ENGINE =================
+    let simInterval = null;
+    let simProgress = 0;
+    let simRunning = false;
+    let simSpeed = 1;
+    let simScenario = 'dam';
+
+    function openThreatSimulator() {
+      document.getElementById('simulator-modal').classList.remove('hidden');
+      resetSimulator();
+    }
+
+    function closeThreatSimulator() {
+      document.getElementById('simulator-modal').classList.add('hidden');
+      pauseSimulator();
+    }
+
+    function setSimSpeed(speed) {
+      simSpeed = speed;
+      [1, 2, 5].forEach(s => {
+        const btn = document.getElementById(`sim-speed-${s}`);
+        if (btn) {
+          btn.className = s === speed
+            ? "px-2.5 py-1 rounded bg-cyan-600 text-white font-bold text-xs"
+            : "px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-bold text-xs hover:bg-slate-700";
+        }
+      });
+      if (simRunning) {
+        pauseSimulator();
+        startSimulator();
+      }
+    }
+
+    function setSimScenario(scen) {
+      simScenario = scen;
+      ['dam', 'taj', 'election'].forEach(s => {
+        const btn = document.getElementById(`sim-scen-${s}`);
+        if (btn) {
+          btn.className = s === scen
+            ? "px-3 py-1.5 rounded-xl bg-cyan-600 text-white font-bold text-xs shadow"
+            : "px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs hover:bg-slate-700";
+        }
+      });
+      resetSimulator();
+    }
+
+    function logSimEvent(timeStr, type, msg, colorClass = "text-slate-300") {
+      const feed = document.getElementById('sim-terminal-feed');
+      if (!feed) return;
+      const row = document.createElement('div');
+      row.className = `flex gap-2 text-[11px] font-mono leading-relaxed py-0.5 border-b border-slate-900/60 ${colorClass}`;
+      row.innerHTML = `<span class="text-slate-500 shrink-0 w-16">[${timeStr}]</span><span class="font-bold shrink-0">[${type}]</span><span>${msg}</span>`;
+      feed.appendChild(row);
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    function resetSimulator() {
+      pauseSimulator();
+      simProgress = 0;
+      document.getElementById('sim-progress-bar').style.width = '0%';
+      document.getElementById('sim-terminal-feed').innerHTML = '';
+      document.getElementById('sim-btn-start').innerHTML = '<span>▶️ Start Simulation</span>';
+      document.getElementById('sim-panic-val').innerText = '0%';
+      document.getElementById('sim-panic-val').className = 'text-2xl font-black text-slate-400 font-mono';
+      document.getElementById('sim-panic-badge').innerText = 'DORMANT';
+      document.getElementById('sim-panic-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-slate-400';
+      document.getElementById('sim-status-banner').className = 'p-3.5 rounded-2xl bg-slate-900 border border-slate-800 flex justify-between items-center text-xs font-mono';
+      document.getElementById('sim-status-text').innerText = 'Awaiting Simulation Trigger...';
+      document.getElementById('sim-fir-btn').classList.add('hidden');
+
+      // Reset defense monitors
+      ['audio', 'vision', 'nli', 'graph'].forEach(m => {
+        document.getElementById(`sim-mon-${m}-badge`).innerText = 'STANDBY';
+        document.getElementById(`sim-mon-${m}-badge`).className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-slate-400';
+        document.getElementById(`sim-mon-${m}-val`).innerText = '--';
+        document.getElementById(`sim-mon-${m}-card`).className = 'p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1';
+      });
+
+      logSimEvent('00:00.0', 'SYSTEM', 'Simulation cockpit ready. Select attack vector and press Start.', 'text-cyan-400');
+    }
+
+    function toggleSimulator() {
+      if (simRunning) {
+        pauseSimulator();
       } else {
-        closePitchTour();
-        openDispatchModal();
+        startSimulator();
       }
     }
 
-    function prevPitchStep() {
-      if (currentPitchIndex > 0) {
-        currentPitchIndex--;
-        renderPitchStep();
-      }
+    function pauseSimulator() {
+      simRunning = false;
+      if (simInterval) clearInterval(simInterval);
+      document.getElementById('sim-btn-start').innerHTML = '<span>▶️ Resume Simulation</span>';
     }
 
-    function closePitchTour() {
-      document.getElementById('pitch-tour-modal').classList.add('hidden');
+    function startSimulator() {
+      simRunning = true;
+      document.getElementById('sim-btn-start').innerHTML = '<span>⏸️ Pause Simulation</span>';
+      const intervalMs = Math.round(400 / simSpeed);
+
+      simInterval = setInterval(() => {
+        simProgress += 1;
+        const progressPct = Math.min(100, Math.round((simProgress / 16) * 100));
+        document.getElementById('sim-progress-bar').style.width = `${progressPct}%`;
+
+        // TIMELINE EVENTS
+        if (simProgress === 1) {
+          // Attack Launched
+          document.getElementById('sim-panic-val').innerText = '45%';
+          document.getElementById('sim-panic-val').className = 'text-2xl font-black text-amber-400 font-mono';
+          document.getElementById('sim-panic-badge').innerText = 'ATTACK DETECTED';
+          document.getElementById('sim-panic-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-950 text-amber-300 border border-amber-800';
+          document.getElementById('sim-status-banner').className = 'p-3.5 rounded-2xl bg-amber-950/80 border border-amber-800 flex justify-between items-center text-xs font-mono';
+          document.getElementById('sim-status-text').innerText = '⚠️ INCOMING MULTIMODAL ATTACK DETECTED';
+
+          if (simScenario === 'dam') {
+            logSimEvent('00:00.8', 'INVASION', 'Syndicate lead @hyd_disaster_alert deploys AI Collector evacuation voice note (24.1k impressions).', 'text-red-400');
+          } else if (simScenario === 'taj') {
+            logSimEvent('00:00.8', 'INVASION', 'Adversary deploys AI diffusion graphic of collapsed Taj Mahal dome with breaking news banner.', 'text-red-400');
+          } else {
+            logSimEvent('00:00.8', 'INVASION', 'Coordinated bot cluster deploys manipulated candidate audio stating election boycott.', 'text-red-400');
+          }
+        } else if (simProgress === 3) {
+          // Bot Ring fires
+          document.getElementById('sim-panic-val').innerText = '94%';
+          document.getElementById('sim-panic-val').className = 'text-2xl font-black text-red-400 font-mono animate-pulse';
+          document.getElementById('sim-panic-badge').innerText = 'CRITICAL PANIC';
+          document.getElementById('sim-panic-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-950 text-red-300 border border-red-800';
+
+          logSimEvent('00:01.4', 'BOT RING', '7 amplifier accounts fire 42 synchronized retweets across EN/HI/TE (Δt ≤ 180s).', 'text-rose-400');
+          logSimEvent('00:01.8', 'VIRAL', 'Second wave attaches recycled disaster photo to flood trending algorithms.', 'text-amber-300');
+        } else if (simProgress === 5) {
+          // SatyaShield Engine 1: Audio triggers
+          document.getElementById('sim-mon-audio-card').className = 'p-3 rounded-xl bg-slate-950 border border-red-700 shadow-lg shadow-red-950/40 space-y-1';
+          document.getElementById('sim-mon-audio-badge').innerText = 'VOCODER DETECTED';
+          document.getElementById('sim-mon-audio-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold badge-fake';
+          document.getElementById('sim-mon-audio-val').innerText = '100% FAKE (SFM=0.482)';
+
+          logSimEvent('00:02.3', 'AUDIO AI', 'Wav2Vec 2.0 flags neural vocoder plateau across 4–8 kHz band. Pitch jitter = 0.004 (Inhuman rigidity).', 'text-cyan-300');
+        } else if (simProgress === 7) {
+          // SatyaShield Engine 2: Vision triggers
+          document.getElementById('sim-mon-vision-card').className = 'p-3 rounded-xl bg-slate-950 border border-red-700 shadow-lg shadow-red-950/40 space-y-1';
+          document.getElementById('sim-mon-vision-badge').innerText = simScenario === 'taj' ? 'AI DIFFUSION' : 'REUSED PTI ARCHIVE';
+          document.getElementById('sim-mon-vision-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold badge-fake';
+          document.getElementById('sim-mon-vision-val').innerText = simScenario === 'taj' ? 'ViT: 98.8% FAKE' : 'dHash: 97.1% (dH=2 bits)';
+
+          if (simScenario === 'taj') {
+            logSimEvent('00:02.8', 'VISION AI', 'Vision Transformer confirms synthetic generative diffusion textures. pHash mismatch (dH=27 bits against intact ASI record).', 'text-cyan-300');
+          } else {
+            logSimEvent('00:02.8', 'VISION AI', 'Perceptual 64-bit dHash matches August 2018 Kerala Flood archive photo. Recycled out of context.', 'text-cyan-300');
+          }
+        } else if (simProgress === 9) {
+          // SatyaShield Engine 3: Multilingual NLI Ground-Truth triggers
+          document.getElementById('sim-mon-nli-card').className = 'p-3 rounded-xl bg-slate-950 border border-red-700 shadow-lg shadow-red-950/40 space-y-1';
+          document.getElementById('sim-mon-nli-badge').innerText = 'CONTRADICTED';
+          document.getElementById('sim-mon-nli-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold badge-fake';
+          document.getElementById('sim-mon-nli-val').innerText = 'RoBERTa: 94.0% REFUTED';
+
+          if (simScenario === 'taj') {
+            logSimEvent('00:03.2', 'GOV RAG', 'Archaeological Survey of India (ASI) optical sensors verify monument 100% standing and intact.', 'text-emerald-400');
+          } else {
+            logSimEvent('00:03.2', 'GOV RAG', 'Central Water Commission (CWC) telemetry confirms Nagarjuna Sagar reservoir safe at 534.80 ft (44.2%).', 'text-emerald-400');
+          }
+        } else if (simProgress === 11) {
+          // SatyaShield Engine 4: Louvain Graph Clustering triggers
+          document.getElementById('sim-mon-graph-card').className = 'p-3 rounded-xl bg-slate-950 border border-amber-700 shadow-lg shadow-amber-950/40 space-y-1';
+          document.getElementById('sim-mon-graph-badge').innerText = 'SYNDICATE ISOLATED';
+          document.getElementById('sim-mon-graph-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold badge-warn';
+          document.getElementById('sim-mon-graph-val').innerText = 'Louvain Q=0.68 (7 Bots)';
+
+          logSimEvent('00:03.7', 'GRAPH CIB', 'Louvain modularity algorithm isolates 7 coordinated accounts. Ringleader identified: @hyd_disaster_alert.', 'text-purple-300');
+        } else if (simProgress === 13) {
+          // Panic plummets as SatyaShield broadcasts truth
+          document.getElementById('sim-panic-val').innerText = '18%';
+          document.getElementById('sim-panic-val').className = 'text-2xl font-black text-emerald-400 font-mono';
+          document.getElementById('sim-panic-badge').innerText = 'NEUTRALIZING';
+          document.getElementById('sim-panic-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-800';
+
+          logSimEvent('00:04.1', 'DISPATCH', 'Automated fact-checking advisory broadcast to regional news wire and SDMA cell channels.', 'text-emerald-300');
+        } else if (simProgress >= 15) {
+          // Attack completely contained!
+          pauseSimulator();
+          document.getElementById('sim-panic-val').innerText = '3.2%';
+          document.getElementById('sim-panic-val').className = 'text-2xl font-black text-emerald-400 font-mono';
+          document.getElementById('sim-panic-badge').innerText = '100% CONTAINED';
+          document.getElementById('sim-panic-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold badge-real';
+
+          document.getElementById('sim-status-banner').className = 'p-3.5 rounded-2xl bg-emerald-950/80 border border-emerald-700 flex justify-between items-center text-xs font-mono';
+          document.getElementById('sim-status-text').innerHTML = '🛡️ <strong>THREAT COMPLETELY NEUTRALIZED IN 24ms</strong> · Section 69A IT Act FIR Dossier Generated';
+          document.getElementById('sim-fir-btn').classList.remove('hidden');
+
+          logSimEvent('00:04.5', 'SUCCESS', 'Section 69A IT Act emergency takedown FIR-2026-TS-0911 generated with SHA-256 digital chain of custody.', 'text-emerald-400 font-bold');
+          logSimEvent('00:04.8', 'SUMMARY', 'Public panic successfully averted. All 7 malicious nodes flagged for platform suspension.', 'text-emerald-300');
+        }
+      }, intervalMs);
     }
   </script>
 
-  <!-- ================= MODAL: 2-MINUTE JUDGE PITCH TOUR ================= -->
-  <div id="pitch-tour-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="card-dark w-full max-w-xl p-6 rounded-3xl border-2 border-amber-500 shadow-2xl space-y-4 relative">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2">
-          <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black" id="pitch-step-counter">STEP 1 OF 4</span>
-          <span class="text-xs font-mono text-slate-400">SATYASHIELD AI · INCIDENT RESPONSE PIPELINE WALKTHROUGH</span>
+  <!-- ================= MODAL: REAL-TIME THREAT & DEFENSE SIMULATOR STUDIO ================= -->
+  <div id="simulator-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 md:p-6 overflow-y-auto">
+    <div class="card-dark w-full max-w-5xl p-6 rounded-3xl border-2 border-red-600/80 shadow-2xl space-y-5 my-auto relative">
+      
+      <!-- Simulator Header -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-800 pb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-red-950 text-red-400 border border-red-800 text-[10px] font-mono font-bold uppercase tracking-wider">
+              CYBER WAR ROOM · STRESS TEST SIMULATOR
+            </span>
+            <span class="text-xs font-mono text-slate-400 hidden sm:inline">SATYASHIELD SIMULATION ENGINE v2.5</span>
+          </div>
+          <h2 class="text-xl md:text-2xl font-black text-white mt-1">Autonomous Threat Attack & Defense Simulator</h2>
+          <p class="text-xs text-slate-400">Simulate coordinated deepfake disinformation attacks in real-time and observe autonomous defense containment.</p>
         </div>
-        <button onclick="closePitchTour()" class="text-slate-400 hover:text-white font-mono text-sm">✕ Close</button>
+        <button onclick="closeThreatSimulator()" class="text-slate-400 hover:text-white font-mono text-sm px-2 py-1">✕ Close</button>
       </div>
 
-      <!-- Progress Bar -->
-      <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-        <div id="pitch-progress-bar" class="bg-amber-500 h-1.5 transition-all duration-300" style="width: 25%"></div>
+      <!-- Controls & Vector Selectors Bar -->
+      <div class="flex flex-wrap justify-between items-center gap-3 bg-slate-950 p-3 rounded-2xl border border-slate-800 text-xs font-mono">
+        <!-- Attack Vector Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-slate-400 font-bold">ATTACK SCENARIO:</span>
+          <button onclick="setSimScenario('dam')" id="sim-scen-dam" class="px-3 py-1.5 rounded-xl bg-cyan-600 text-white font-bold text-xs shadow">
+            🌊 Dam Collapse Hoax
+          </button>
+          <button onclick="setSimScenario('taj')" id="sim-scen-taj" class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs hover:bg-slate-700">
+            🏛️ Taj Mahal AI Attack
+          </button>
+          <button onclick="setSimScenario('election')" id="sim-scen-election" class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs hover:bg-slate-700">
+            🗳️ Election Audio Deepfake
+          </button>
+        </div>
+
+        <!-- Simulation Play Controls & Speed -->
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">SPEED:</span>
+          <button onclick="setSimSpeed(1)" id="sim-speed-1" class="px-2.5 py-1 rounded bg-cyan-600 text-white font-bold text-xs">1x</button>
+          <button onclick="setSimSpeed(2)" id="sim-speed-2" class="px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-bold text-xs hover:bg-slate-700">2x</button>
+          <button onclick="setSimSpeed(5)" id="sim-speed-5" class="px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-bold text-xs hover:bg-slate-700">5x</button>
+          <button onclick="toggleSimulator()" id="sim-btn-start" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white font-extrabold text-xs shadow flex items-center gap-1">
+            <span>▶️ Start Simulation</span>
+          </button>
+          <button onclick="resetSimulator()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700">
+            🔄 Reset
+          </button>
+        </div>
       </div>
 
-      <div class="space-y-2 py-2">
-        <h3 id="pitch-step-title" class="text-lg font-black text-white"></h3>
-        <p id="pitch-step-desc" class="text-xs text-slate-300 leading-relaxed"></p>
+      <!-- Simulation Progress Bar -->
+      <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+        <div id="sim-progress-bar" class="bg-gradient-to-r from-red-500 via-amber-500 to-emerald-400 h-2 transition-all duration-300" style="width: 0%"></div>
       </div>
 
-      <div class="flex justify-between items-center pt-2 border-t border-slate-800">
-        <button onclick="prevPitchStep()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">
-          ← Previous
-        </button>
-        <button onclick="nextPitchStep()" id="pitch-btn-next" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20">
-          Next Step →
-        </button>
+      <!-- Main Cockpit: 2 Columns -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        <!-- Left: Infiltration & Live Terminal Stream (5 Cols) -->
+        <div class="lg:col-span-5 space-y-4">
+          <!-- Panic Level Gauge Card -->
+          <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex justify-between items-center">
+            <div>
+              <span class="text-[10px] font-mono text-slate-400 block uppercase">Simulated Viral Panic Level</span>
+              <span id="sim-panic-val" class="text-2xl font-black text-slate-400 font-mono">0%</span>
+            </div>
+            <span id="sim-panic-badge" class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-slate-800 text-slate-400">
+              DORMANT
+            </span>
+          </div>
+
+          <!-- Live Terminal Event Log -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-center text-xs font-mono text-slate-400">
+              <span>LIVE INCIDENT ATTACK TELEMETRY:</span>
+              <span class="text-[10px] text-cyan-400">Streaming Event Loop</span>
+            </div>
+            <div id="sim-terminal-feed" class="h-64 rounded-2xl bg-black border border-slate-800 p-3 overflow-y-auto space-y-0.5">
+              <div class="text-[11px] font-mono text-slate-500">[00:00.0] Simulation cockpit ready. Select attack vector and press Start.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: 4 SatyaShield Defense Modules (7 Cols) -->
+        <div class="lg:col-span-7 space-y-3">
+          <div class="flex justify-between items-center text-xs font-mono text-slate-400">
+            <span>SATYASHIELD AUTONOMOUS DEFENSE SHIELD:</span>
+            <span class="text-emerald-400 font-bold">100% Local Inference (&lt; 25 ms)</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+            <!-- Module 1: Audio -->
+            <div id="sim-mon-audio-card" class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1 transition-all">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400 text-[11px] font-bold">🎙️ AUDIO FORENSICS</span>
+                <span id="sim-mon-audio-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400">STANDBY</span>
+              </div>
+              <div class="font-bold text-sm text-slate-200" id="sim-mon-audio-val">--</div>
+              <p class="text-[10px] text-slate-400 font-sans">Wav2Vec2 subband FFT spectral flatness (4–8 kHz plateau detection).</p>
+            </div>
+
+            <!-- Module 2: Vision -->
+            <div id="sim-mon-vision-card" class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1 transition-all">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400 text-[11px] font-bold">🖼️ VISION TRANSFORMER</span>
+                <span id="sim-mon-vision-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400">STANDBY</span>
+              </div>
+              <div class="font-bold text-sm text-slate-200" id="sim-mon-vision-val">--</div>
+              <p class="text-[10px] text-slate-400 font-sans">Error Level Analysis (ELA Q=90) + 64-bit dHash archive comparison.</p>
+            </div>
+
+            <!-- Module 3: NLI Ground-Truth -->
+            <div id="sim-mon-nli-card" class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1 transition-all">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400 text-[11px] font-bold">✍️ MULTILINGUAL NLI RAG</span>
+                <span id="sim-mon-nli-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400">STANDBY</span>
+              </div>
+              <div class="font-bold text-sm text-slate-200" id="sim-mon-nli-val">--</div>
+              <p class="text-[10px] text-slate-400 font-sans">RoBERTa cross-references live CWC/NDMA government telemetry (EN/HI/TE).</p>
+            </div>
+
+            <!-- Module 4: Louvain Bot Network -->
+            <div id="sim-mon-graph-card" class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1 transition-all">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400 text-[11px] font-bold">🌐 CIB BOT SYNDICATE</span>
+                <span id="sim-mon-graph-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400">STANDBY</span>
+              </div>
+              <div class="font-bold text-sm text-slate-200" id="sim-mon-graph-val">--</div>
+              <p class="text-[10px] text-slate-400 font-sans">Louvain community detection isolates synchronized burst rings (Δt ≤ 180s).</p>
+            </div>
+          </div>
+
+          <!-- Bottom Defense Status Banner -->
+          <div id="sim-status-banner" class="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs font-mono">
+            <span id="sim-status-text" class="text-slate-300">Awaiting Simulation Trigger...</span>
+            <button onclick="closeThreatSimulator(); openDispatchModal();" id="sim-fir-btn" class="hidden px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow shrink-0">
+              📄 View Police FIR Dossier
+            </button>
+          </div>
+        </div>
+
       </div>
+
     </div>
   </div>
 
