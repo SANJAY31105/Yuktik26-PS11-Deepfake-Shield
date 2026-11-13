@@ -88,6 +88,20 @@ async def dashboard_ui():
     return FileResponse(index_file)
 
 
+@app.get("/guide", tags=["Web UI"])
+async def guide_ui():
+    """Serves the printable HTML evaluation guide & jury defense dossier."""
+    guide_file = STATIC_DIR / "team_guide.html"
+    return FileResponse(guide_file)
+
+
+@app.get("/pdf", tags=["Web UI"])
+async def pdf_ui():
+    """Direct route to printable guide and PDF exporter."""
+    guide_file = STATIC_DIR / "team_guide.html"
+    return FileResponse(guide_file)
+
+
 @app.get("/health", tags=["Health"])
 async def health():
     """Health check endpoint."""

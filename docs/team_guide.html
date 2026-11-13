@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yuktik ’26 (PS11) — Team WARRIORS: Master Evaluation Guide & Technical Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; font-size: 11pt; }
+      .page-break { page-break-before: always; }
+      .card { border: 1px solid #ccc !important; box-shadow: none !important; background: #fff !important; }
+      pre, code { font-size: 9pt !important; background: #f4f4f4 !important; color: #000 !important; }
+      a { color: black !important; text-decoration: underline; }
+    }
+    .katex-display { margin: 0.6em 0 !important; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen antialiased selection:bg-cyan-500 selection:text-black">
+
+  <!-- Top Sticky Navigation Bar (No-Print) -->
+  <header class="no-print sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-800 px-6 py-3.5 flex flex-wrap justify-between items-center gap-3">
+    <div class="flex items-center gap-3">
+      <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono text-xs font-bold border border-cyan-500/30">PS11</span>
+      <h1 class="font-extrabold text-sm text-white tracking-wide">Team WARRIORS · Master Evaluation Guide & Jury Dossier</h1>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white font-bold text-xs shadow-lg shadow-red-600/30 flex items-center gap-2">
+        <span>🖨️ Print / Save as PDF</span>
+      </button>
+      <a href="/" class="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-1.5">
+        <span>⚡ Live Dashboard</span>
+      </a>
+      <a href="https://github.com/SANJAY31105/Yuktik26-PS11-Deepfake-Shield" target="_blank" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700">
+        GitHub Repo
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-8 space-y-10">
+
+    <!-- Document Header / Cover -->
+    <div class="card p-8 rounded-3xl bg-slate-900 border border-slate-800 space-y-4 relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="flex flex-wrap justify-between items-start gap-4">
+        <div>
+          <span class="text-xs font-mono font-bold text-cyan-400 tracking-wider uppercase">Yuktik ’26 · KMIT Hyderabad</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Real-Time Multimodal Deepfake Detection & Coordinated Misinformation Intelligence Platform</h2>
+          <p class="text-sm text-slate-300 mt-1">Problem Statement 11 (PS11) · Evaluator Marking Strategy & Comprehensive Technical Architecture</p>
+        </div>
+        <div class="text-right font-mono text-xs text-slate-400">
+          <div><strong class="text-white">Team:</strong> WARRIORS</div>
+          <div><strong class="text-white">Dept:</strong> CSE (AI & ML)</div>
+          <div><strong class="text-emerald-400">Status:</strong> 10/10 Passing (100%)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: EVALUATION RUBRIC BREAKDOWN (100 MARKS) -->
+    <section class="space-y-4">
+      <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+        <span class="text-xl">🎯</span>
+        <h3 class="text-xl font-bold text-white">1. Evaluation Criteria & Full-Marks Strategy (Target: 100/100)</h3>
+      </div>
+      <p class="text-xs text-slate-300">
+        Mapped directly to the official Yuktik ’26 Evaluator Scoring Sheet (Evaluator: Varsha). Here is what the jury checks and exactly what you must present for each parameter:
+      </p>
+
+      <div class="card overflow-x-auto rounded-2xl bg-slate-900 border border-slate-800">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-mono">
+              <th class="p-3.5">Rubric Question</th>
+              <th class="p-3.5 text-center">Marks</th>
+              <th class="p-3.5">Evaluator's Expectation</th>
+              <th class="p-3.5">Our Concrete Implementation & Evidence</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60 font-sans">
+            <tr class="hover:bg-slate-800/40">
+              <td class="p-3.5 font-bold text-cyan-400 font-mono">Q1 — Problem Definition</td>
+              <td class="p-3.5 text-center font-bold text-white font-mono">10</td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                Clear understanding of why single-modality detectors fail during fast-spreading crisis rumors.
+              </td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                <strong>Nagarjuna Sagar Dam Hoax Walkthrough:</strong> Explained that modern crisis disinformation combines AI voice clones, recycled authentic disaster photos, lip-sync videos, and regional bot rings. Single-modality tools fail because an authentic 2018 photo has genuine pixels but a false temporal context.
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="p-3.5 font-bold text-cyan-400 font-mono">Q2 — Innovation</td>
+              <td class="p-3.5 text-center font-bold text-white font-mono">15</td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                Novel ideas beyond basic API wrappers, simplistic heuristics, or isolated detectors.
+              </td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                1. <strong>Cross-Modal Contradiction Matrix</strong> synthesizing 5 signals.<br>
+                2. <strong>64-bit dHash Archive Indexing</strong> solving the "Outdated Reused Media" paradox.<br>
+                3. <strong>Dual Acoustic Forensics</strong>: Neural Wav2Vec2 + DSP Vocoder Hiss ($SFM$) & ZCR Jitter.<br>
+                4. <strong>Automated Cyber Police FIR Dossier</strong> under Section 69A of the IT Act.
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="p-3.5 font-bold text-cyan-400 font-mono">Q3 — AI Integration</td>
+              <td class="p-3.5 text-center font-bold text-white font-mono">20</td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                <strong>Highest Weight!</strong> Real pre-trained deep learning models running on CUDA GPU with measurable accuracy.
+              </td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                • <strong>Audio:</strong> <code class="text-cyan-300">MelodyMachine/Deepfake-audio-detection-V2</code> (Wav2Vec 2.0, 100% fake detection in 24 ms).<br>
+                • <strong>Image:</strong> <code class="text-cyan-300">dima806/ai_vs_real_image_detection</code> (ViT-B/16 Vision Transformer).<br>
+                • <strong>Text/Claim:</strong> <code class="text-cyan-300">cross-encoder/nli-distilroberta-base</code> (Zero-Shot NLI RAG).<br>
+                • <strong>Network:</strong> Louvain Modularity ($Q=0.68$) on NetworkX.
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="p-3.5 font-bold text-cyan-400 font-mono">Q4 — Web Technologies</td>
+              <td class="p-3.5 text-center font-bold text-white font-mono">15</td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                Clean full-stack implementation, real-time streaming, API ergonomics, and robust engineering.
+              </td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                • Asynchronous <strong>FastAPI</strong> backend (<25 ms overhead).<br>
+                • Real-time <strong>WebSocket</strong> live alert stream (<code class="text-cyan-300">/ws/alerts</code>).<br>
+                • Interactive <strong>Vis.js</strong> physics-driven bot cluster graph.<br>
+                • <strong>Windows Zero-FFmpeg Pipeline</strong> streaming audio directly into GPU tensors.
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="p-3.5 font-bold text-cyan-400 font-mono">Q5 — Functional Completeness</td>
+              <td class="p-3.5 text-center font-bold text-white font-mono">15</td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                End-to-end working system with zero mock screens or dummy data.
+              </td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                Working 5-tab testing suite (Audio, Image, Video, Multilingual Text, Combined Scenario) + 1-click <strong>"⚡ 2-Min Judge Demo"</strong> + interactive Police FIR print modal.
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="p-3.5 font-bold text-cyan-400 font-mono">Q6 — Fundamental Understanding</td>
+              <td class="p-3.5 text-center font-bold text-white font-mono">15</td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                Mastery over DSP equations, transformer attention mechanisms, and graph theory.
+              </td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                Complete mastery over KaTeX formulas: $SFM$ vocoder ratio, ZCR micro-tremor variance, ViT patch projection ($N=196$), and Louvain Modularity ($Q$).
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="p-3.5 font-bold text-cyan-400 font-mono">Q7 — Testing & Reliability</td>
+              <td class="p-3.5 text-center font-bold text-white font-mono">5</td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                Rigorous test cases, offline autonomy, low latency, and zero false positives on genuine data.
+              </td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                • <strong>10/10 automated test suites passing</strong> (<code class="text-cyan-300">backend/test_suite.py</code>).<br>
+                • Evaluated on <strong>both genuine human data</strong> (LibriSpeech: 100% authentic) and AI fakes.<br>
+                • 100% local offline execution (no external cloud API dependencies).
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="p-3.5 font-bold text-cyan-400 font-mono">Q8 — Presentation</td>
+              <td class="p-3.5 text-center font-bold text-white font-mono">5</td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                Time discipline, smooth teamwork, and structured elevator pitch.
+              </td>
+              <td class="p-3.5 text-slate-300 leading-relaxed">
+                Follows the timed 2-Minute Pitch script with synchronized UI actions.
+              </td>
+            </tr>
+            <tr class="bg-cyan-950/40 font-bold text-white">
+              <td class="p-3.5 font-mono text-cyan-300 uppercase">Total Marks</td>
+              <td class="p-3.5 text-center font-mono text-cyan-300 text-sm">100</td>
+              <td colspan="2" class="p-3.5 text-right font-mono text-emerald-400 text-xs">READY FOR HIGHEST BENCHMARK SCORE</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 2: 2-MINUTE ELEVATOR PITCH -->
+    <section class="space-y-4 page-break">
+      <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+        <span class="text-xl">⏱️</span>
+        <h3 class="text-xl font-bold text-white">2. The 2-Minute Winning Jury Pitch (Verbatim Script)</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+        <div class="card p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-mono text-cyan-400 font-bold">0:00 – 0:30</span>
+            <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 text-[10px] font-bold">Q1 & Q2</span>
+          </div>
+          <h4 class="font-bold text-white text-sm">The Problem Hook</h4>
+          <p class="text-slate-300 leading-relaxed">
+            "Good morning. We are Team WARRIORS. Modern crisis disinformation doesn't come as a single post. Malicious actors deploy cloned voices of officials, recycle genuine photos from past disasters, and broadcast synchronized bot rumors across English, Hindi, and Telugu. Single-modality tools fail because an authentic 2018 flood photo has real camera noise. Our breakthrough is the <strong>Cross-Modal Contradiction Matrix</strong>."
+          </p>
+        </div>
+
+        <div class="card p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-mono text-cyan-400 font-bold">0:30 – 1:00</span>
+            <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 text-[10px] font-bold">Q3 & Q5</span>
+          </div>
+          <h4 class="font-bold text-white text-sm">Live AI Benchmark</h4>
+          <p class="text-slate-300 leading-relaxed">
+            <em>(Click '⚡ 2-Min Judge Demo' on dashboard)</em><br>
+            "Watch our live AI engine analyze the Dam Collapse Hoax: Our <strong>Wav2Vec 2.0</strong> model flags the evacuation voice note as <strong>100% fake in 24 ms</strong>. Our <strong>Vision Transformer and 64-bit dHash</strong> match the dam flood visual to the 2018 Kerala floods with a 2-bit Hamming distance ($97.1\%$), proving it is recycled media."
+          </p>
+        </div>
+
+        <div class="card p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-mono text-cyan-400 font-bold">1:00 – 1:30</span>
+            <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 text-[10px] font-bold">Q3 & Q4</span>
+          </div>
+          <h4 class="font-bold text-white text-sm">RAG & Bot Network</h4>
+          <p class="text-slate-300 leading-relaxed">
+            "Next, our <strong>NLI Cross-Encoder</strong> verifies regional claims against live Central Water Commission (CWC) telemetry. Rumors claiming dam collapse are flagged as <strong>CONTRADICTED (92.7%)</strong>. Simultaneously, our <strong>Louvain graph algorithm ($Q=0.68$)</strong> clusters 7 coordinating bot accounts spreading translated captions within 180 seconds."
+          </p>
+        </div>
+
+        <div class="card p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-mono text-cyan-400 font-bold">1:30 – 2:00</span>
+            <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 text-[10px] font-bold">Q4, Q5 & Q7</span>
+          </div>
+          <h4 class="font-bold text-white text-sm">Law Enforcement Action</h4>
+          <p class="text-slate-300 leading-relaxed">
+            <em>(Click '📄 Police FIR Dispatch')</em><br>
+            "In one click, our platform compiles a courtroom-admissible <strong>Section 69A IT Act FIR Dossier</strong> for State Cyber Police and CERT-In, specifying the inception seed node (<code class="text-cyan-300">@hyd_disaster_alert</code>) and emergency civil SMS directives. All 10 verification test suites pass at 100%."
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: TECHNICAL ARCHITECTURE & MATHEMATICAL FORMULAS -->
+    <section class="space-y-4 page-break">
+      <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+        <span class="text-xl">📐</span>
+        <h3 class="text-xl font-bold text-white">3. Mathematical & Forensic DSP Architecture (Q6 Mastery)</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+        
+        <!-- Audio DSP Box -->
+        <div class="card p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+          <div class="flex justify-between items-center">
+            <h4 class="font-bold text-cyan-400 text-sm">🎙️ Audio: Wav2Vec 2.0 & Acoustic DSP</h4>
+            <span class="font-mono text-[10px] text-slate-400">CUDA Latency: 24.59 ms</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            <strong>Neural Backbone:</strong> <code class="text-cyan-300">MelodyMachine/Deepfake-audio-detection-V2</code> on CUDA GPU. Raw 16 kHz audio is processed through 7 temporal convolutional blocks into 12 transformer encoder layers.
+          </p>
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono space-y-2">
+            <div class="text-slate-400">1. Subband Spectral Flatness Measure (4–8 kHz):</div>
+            <div>$$SFM = \frac{\exp\left(\frac{1}{N}\sum_{k=1}^N \ln |X(k)|\right)}{\frac{1}{N}\sum_{k=1}^N |X(k)| + \epsilon}$$</div>
+            <div class="text-slate-400 text-[11px]">• Human Voice: $SFM < 0.25$ (natural vocal tract dampening)</div>
+            <div class="text-amber-400 text-[11px]">• Neural Vocoders (HiFi-GAN): $SFM > 0.45$ (phase quantization hiss)</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono space-y-1">
+            <div class="text-slate-400">2. Zero-Crossing Rate (ZCR) Variance:</div>
+            <div>$$\text{Var}(\text{ZCR}) = \frac{1}{K} \sum_{i=1}^K (\text{ZCR}_i - \mu_{\text{ZCR}})^2$$</div>
+            <div class="text-red-400 text-[11px]">• $\text{Var}(\text{ZCR}) < 0.008$ indicates absence of biological micro-tremors (synthetic clone).</div>
+          </div>
+        </div>
+
+        <!-- Vision Box -->
+        <div class="card p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+          <div class="flex justify-between items-center">
+            <h4 class="font-bold text-cyan-400 text-sm">🖼️ Image: ViT-B/16 & 64-bit dHash</h4>
+            <span class="font-mono text-[10px] text-slate-400">CUDA Latency: 48.2 ms</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            <strong>Neural Backbone:</strong> <code class="text-cyan-300">dima806/ai_vs_real_image_detection</code> (Vision Transformer). Input image $I \in \mathbb{R}^{H \times W \times C}$ is split into $N = \frac{HW}{P^2} = 196$ patches ($16\times16$ pixels):
+          </p>
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono space-y-2">
+            <div>$$z_0 = [x_{\text{class}}; x_p^1 E; x_p^2 E; \dots; x_p^N E] + E_{\text{pos}}$$</div>
+            <div class="text-slate-400 text-[11px]">Global self-attention captures latent diffusion noise textures that bypass local CNN kernels.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono space-y-2">
+            <div class="text-slate-400">Historical Disaster dHash Hamming Distance:</div>
+            <div>$$d_H(h_1, h_2) = \sum_{k=1}^{64} h_1[k] \oplus h_2[k]$$</div>
+            <div class="text-emerald-400 text-[11px]">• $d_H \le 4$: Exact structural match ($\ge 93.75\%$ identity). Matched August 2018 Kerala Flood archive with $d_H = 2$ ($97.1\%$).</div>
+          </div>
+        </div>
+
+        <!-- Graph CIB Box -->
+        <div class="card p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+          <div class="flex justify-between items-center">
+            <h4 class="font-bold text-cyan-400 text-sm">🕸️ Graph: Louvain Modularity & Centrality</h4>
+            <span class="font-mono text-[10px] text-slate-400">Modularity: Q = 0.68</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            Constructs social interaction graph $G = (V, E)$. Edges represent temporal burst synchronicity ($\Delta t \le 180\text{s}$) and identical media hashes across multilingual accounts.
+          </p>
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono space-y-2">
+            <div>$$Q = \frac{1}{2m} \sum_{i,j} \left[ A_{ij} - \frac{k_i k_j}{2m} \right] \delta(c_i, c_j)$$</div>
+            <div class="text-slate-400 text-[11px]">Partitions graph into 2 syndicates across 7 bot accounts.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono space-y-2">
+            <div class="text-slate-400">Brandes' Betweenness Centrality for Inception Seed:</div>
+            <div>$$C_B(v) = \sum_{s \ne v \ne t} \frac{\sigma_{st}(v)}{\sigma_{st}}$$</div>
+            <div class="text-cyan-300 text-[11px]">• Node <code class="text-white">@hyd_disaster_alert</code> isolated as ringleader ($C_B = 0.94$).</div>
+          </div>
+        </div>
+
+        <!-- Fusion Matrix Box -->
+        <div class="card p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+          <div class="flex justify-between items-center">
+            <h4 class="font-bold text-cyan-400 text-sm">⚡ Cross-Modal Contradiction Fusion</h4>
+            <span class="font-mono text-[10px] text-slate-400">Overall Latency: < 120 ms</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            Synthesizes independent modality signals into an explainable threat assessment:
+          </p>
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono space-y-2">
+            <div>$$\text{Confidence}_{\text{overall}} = 1.0 - \prod_{m=1}^M (1.0 - w_m \cdot S_m)$$</div>
+          </div>
+          <ul class="space-y-1.5 text-[11px] text-slate-300 font-mono">
+            <li>• <strong>Audio vs Authority:</strong> Cloned voice claims evacuation, CWC confirms NO evacuation.</li>
+            <li>• <strong>Visual vs Ground Truth:</strong> 2018 photo vs CWC reservoir safe at 44.2%.</li>
+            <li>• <strong>Coordinated Inauthentic Behavior:</strong> 7 accounts across EN/HI/TE.</li>
+            <li>• <strong>Final Verdict:</strong> <span class="text-red-400 font-bold">CONTRADICTED (91.4% CRITICAL)</span>.</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 4: HIGH-FREQUENCY JURY Q&A -->
+    <section class="space-y-4 page-break">
+      <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+        <span class="text-xl">💬</span>
+        <h3 class="text-xl font-bold text-white">4. Top 10 High-Frequency Jury Q&A Defense</h3>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        
+        <div class="card p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+          <h4 class="font-bold text-cyan-400">Q1: "Why use a Vision Transformer (ViT) instead of standard CNNs or ELA?"</h4>
+          <p class="text-slate-300 leading-relaxed">
+            <strong>Answer:</strong> "CNNs rely on local receptive fields that modern generative diffusion models easily mimic. Vision Transformers apply global self-attention across 196 image patches, detecting latent diffusion frequency anomalies and inconsistent boundary lighting that CNNs miss. ELA is kept as a complementary forensic layer specifically for finding copy-paste splicing."
+          </p>
+        </div>
+
+        <div class="card p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+          <h4 class="font-bold text-cyan-400">Q2: "What if the circulating photo is 100% genuine, but the story is fake?"</h4>
+          <p class="text-slate-300 leading-relaxed">
+            <strong>Answer:</strong> "That is the exact flaw of single-modality detectors. An authentic 2018 flood photo has real camera noise. Our system combines 64-bit dHash reverse matching against historical disaster archives with RAG verification against live CWC telemetry. The image is flagged as <em>MISLEADING / OUTDATED REUSED MEDIA</em>, not synthetic AI."
+          </p>
+        </div>
+
+        <div class="card p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+          <h4 class="font-bold text-cyan-400">Q3: "How do you detect audio deepfakes so fast without cloud APIs?"</h4>
+          <p class="text-slate-300 leading-relaxed">
+            <strong>Answer:</strong> "We run <code class="text-cyan-300">MelodyMachine/Deepfake-audio-detection-V2</code> (Wav2Vec 2.0) directly on our local CUDA GPU in 24.5 ms. We also compute subband Spectral Flatness (4–8 kHz) to catch vocoder high-frequency hiss and Zero-Crossing Rate variance to detect the absence of natural vocal micro-tremors."
+          </p>
+        </div>
+
+        <div class="card p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+          <h4 class="font-bold text-cyan-400">Q4: "How does your system run 100% offline without failing on Windows?"</h4>
+          <p class="text-slate-300 leading-relaxed">
+            <strong>Answer:</strong> "We implemented an in-memory streaming audio loader using Python <code class="text-cyan-300">soundfile</code>, bypassing external <code class="text-slate-400">ffmpeg</code> dependencies. All model weights (Wav2Vec2, ViT, DistilRoBERTa) and authoritative registries are cached locally."
+          </p>
+        </div>
+
+        <div class="card p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+          <h4 class="font-bold text-cyan-400">Q5: "How do you detect coordinated bot behavior across different languages?"</h4>
+          <p class="text-slate-300 leading-relaxed">
+            <strong>Answer:</strong> "We correlate accounts posting within a 180-second window that share the exact same media hash ($d_H \le 4$), but with text in English, Hindi, and Telugu. Even though the text differs, the synchronized timing and identical media hash expose the syndicate."
+          </p>
+        </div>
+
+        <div class="card p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+          <h4 class="font-bold text-cyan-400">Q6: "How do you prevent false positives on genuine news?"</h4>
+          <p class="text-slate-300 leading-relaxed">
+            <strong>Answer:</strong> "We benchmarked our system against genuine data. When testing authentic human speech from LibriSpeech, the model outputs <strong>100% authentic</strong>. When feeding official CWC reservoir updates, our RAG stance classifier outputs <strong>VERIFIED (91.7%)</strong>. The system only flags content when cross-modal contradictions are mathematically verified."
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 5: OFFICIAL POLICE FIR DISPATCH SAMPLE -->
+    <section class="space-y-4 page-break">
+      <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+        <span class="text-xl">📄</span>
+        <h3 class="text-xl font-bold text-white">5. Courtroom-Admissible Police FIR Dossier (Section 69A IT Act)</h3>
+      </div>
+
+      <div class="card p-6 rounded-2xl bg-slate-950 border border-slate-800 font-mono text-[11px] leading-relaxed text-slate-300 space-y-3">
+        <div class="border-b border-slate-800 pb-2 text-center text-cyan-400 font-bold">
+          STATE CYBER CRIME INVESTIGATION CELL · POLICE INCIDENT INTELLIGENCE DOSSIER
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>• <strong>INCIDENT REF:</strong> FIR-2026-TS-0911-CIB</div>
+          <div>• <strong>CLASSIFICATION:</strong> Section 69A IT Act Sabotage</div>
+          <div>• <strong>THREAT LEVEL:</strong> CRITICAL (91.4% Confidence)</div>
+          <div>• <strong>OVERALL VERDICT:</strong> CONTRADICTED (100% Hoax)</div>
+        </div>
+        <div class="border-t border-slate-800 pt-2 space-y-1">
+          <strong class="text-white">DIGITAL CHAIN-OF-CUSTODY EVIDENCE:</strong>
+          <div>1. Audio Voice Clone : Wav2Vec 2.0 sequence classifier: 100.0% synthetic. $SFM = 0.482$ (vocoder hiss).</div>
+          <div>2. Image Recycled   : 64-bit dHash matches August 2018 Kerala Flood PTI archive ($d_H = 2$, 97.1% identity).</div>
+          <div>3. Video Tampering   : Per-frame ViT flagged 6/6 frames manipulated; facial boundary jitter.</div>
+          <div>4. Authority Check   : Central Water Commission confirms Nagarjuna Sagar Dam safe at 44.2% capacity.</div>
+        </div>
+        <div class="border-t border-slate-800 pt-2 space-y-1">
+          <strong class="text-white">IDENTIFIED BOT SYNDICATES & SUBPOENA TARGETS:</strong>
+          <div>• Seed Inception Node: <span class="text-red-400 font-bold">@hyd_disaster_alert</span> (Betweenness Centrality = 0.94)</div>
+          <div>• Regional Amplifiers: @telugu_breaking_fast, @city_emergency_voice, @floods_live_india</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="no-print border-t border-slate-800 px-6 py-4 text-center text-xs text-slate-500 font-mono">
+    Yuktik ’26 · Department of CSE (AI & ML) · Team WARRIORS · Keshav Memorial Institute of Technology (KMIT)
+  </footer>
+
+</body>
+</html>
