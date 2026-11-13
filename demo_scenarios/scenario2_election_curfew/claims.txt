@@ -1,0 +1,15 @@
+# Scenario 2: Election / Public Figure Impersonation
+
+### 🎙️ Audio Testing:
+- FAKE Audio : `1_FAKE_cloned_curfew_audio.wav`        -> Verdict: MANIPULATED (100.0%)
+- REAL Audio : `2_REAL_press_statement_audio.wav`     -> Verdict: AUTHENTIC (100.0%)
+
+### 🖼️ Image Testing:
+- FAKE Image : `3_FAKE_ai_riot_photo.jpg`             -> Verdict: MANIPULATED (99.6%)
+- REAL Photo : `4_REAL_press_conference_photo.jpg`    -> Verdict: AUTHENTIC (99.9%)
+
+### ✍️ Text Claims (Copy-paste into Text Tab):
+- FAKE Claim (EN) : "BREAKING: State Home Minister announces statewide Section 144 curfew and shutdown of polling booths immediately!"
+  -> Expected Verdict: CONTRADICTED
+- REAL Claim (EN) : "Election Commission confirms peaceful polling operations across all districts with normal security protocols."
+  -> Expected Verdict: VERIFIED

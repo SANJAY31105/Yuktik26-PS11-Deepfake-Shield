@@ -1,0 +1,15 @@
+# Scenario 3: Financial Panic / Bank Run Crisis
+
+### 🎙️ Audio Testing:
+- FAKE Audio : `1_FAKE_cloned_bank_freeze_audio.wav`       -> Verdict: MANIPULATED (100.0%)
+- REAL Audio : `2_REAL_rbi_governor_briefing_audio.wav`    -> Verdict: AUTHENTIC (100.0%)
+
+### 🖼️ Image Testing:
+- FAKE Image : `3_FAKE_ai_crowd_protest.jpg`              -> Verdict: MANIPULATED (99.6%)
+- REAL Photo : `4_REAL_bank_headquarters_photo.jpg`       -> Verdict: AUTHENTIC (99.9%)
+
+### ✍️ Text Claims (Copy-paste into Text Tab):
+- FAKE Claim (EN) : "URGENT FINANCIAL ALERT: Major private bank accounts are frozen by central bank, withdraw all cash now!"
+  -> Expected Verdict: CONTRADICTED
+- REAL Claim (EN) : "Reserve Bank of India clarifies that all scheduled commercial bank capital reserves are safe and liquidity is fully maintained."
+  -> Expected Verdict: VERIFIED

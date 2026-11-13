@@ -1,0 +1,20 @@
+# Scenario 1: Disaster Panic (Nagarjuna Sagar Dam Collapse Hoax)
+
+### 🎙️ Audio Testing:
+- FAKE Audio : `1_FAKE_collector_evacuation_voice.wav` -> Verdict: MANIPULATED (100.0%)
+- REAL Audio : `2_REAL_collector_speech.wav`            -> Verdict: AUTHENTIC (100.0%)
+
+### 🖼️ Image Testing:
+- FAKE Image       : `3_FAKE_ai_synthetic_flood.jpg`       -> Verdict: MANIPULATED (99.6%)
+- MISLEADING Image : `4_MISLEADING_reused_2018_flood.jpg` -> Verdict: REUSED ARCHIVE / MISLEADING (97.1%)
+- REAL Photo       : `5_REAL_camera_photo.jpg`             -> Verdict: AUTHENTIC (99.9%)
+
+### ✍️ Text Claims (Copy-paste into Text Tab):
+- FAKE Claim (EN) : "URGENT: Nagarjuna Sagar Dam collapsed at 10 AM! Emergency evacuation ordered by Collector!"
+  -> Expected Verdict: CONTRADICTED (92.7%)
+- FAKE Claim (HI) : "बड़ा बांध टूटा! शहर में जल प्रलय की चेतावनी, तुरंत सुरक्षित स्थान पर पहुंचे!"
+  -> Expected Verdict: CONTRADICTED (92.0%)
+- FAKE Claim (TE) : "డ్యామ్ కొట్టుకుపోయింది! కలెక్టర్ అత్యవసర ఖాళీ ఆదేశాలు జారీ చేశారు!"
+  -> Expected Verdict: CONTRADICTED (92.1%)
+- REAL Claim (EN) : "Nagarjuna Sagar reservoir water level is currently at 534.80 feet (44.2% storage capacity). All crest gates remain closed and secure."
+  -> Expected Verdict: VERIFIED (91.7%)
