@@ -1,0 +1,27 @@
+{
+  "incident_title": "Yuktik-2026 PS11 Benchmark: Dam Collapse Disinformation Campaign",
+  "description": "At 10:00 AM, a video circulated claiming major dam collapse near a city...",
+  "posts": [
+    {
+      "account": "@breaking_hyd_alert",
+      "lang": "en",
+      "caption": "URGENT: Nagarjuna Sagar Dam collapsed! City under immediate danger! #DamCollapse",
+      "timestamp": "10:00 AM",
+      "media_type": "video"
+    },
+    {
+      "account": "@telangana_now24",
+      "lang": "te",
+      "caption": "నిజాంసాగర్ డ్యామ్ గేట్లు కొట్టుకుపోయాయి! వెంటనే ఖాళీ చేయండి!",
+      "timestamp": "10:02 AM",
+      "media_type": "video"
+    },
+    {
+      "account": "@bharat_samachar_live",
+      "lang": "hi",
+      "caption": "बड़ा बांध टूटा! शहर में जल प्रलय की चेतावनी, तुरंत सुरक्षित स्थान पर पहुंचे!",
+      "timestamp": "10:05 AM",
+      "media_type": "video"
+    }
+  ]
+}
