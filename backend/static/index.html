@@ -191,6 +191,9 @@
               <button onclick="testPreloadedMedia('image', '/data/kerala_flood_reused_photo.jpg', 'kerala_flood_reused_photo.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 text-white text-xs font-bold shadow flex items-center gap-2">
                 <span>⚡ Test Reused Flood Photo (Misleading)</span>
               </button>
+              <button onclick="testPreloadedMedia('image', '/data/authentic_real_photo.jpg', 'authentic_real_photo.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>🛡️ Test Authentic Photo (Real)</span>
+              </button>
               <label class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer flex items-center gap-2">
                 <span>📁 Upload JPG/PNG</span>
                 <input type="file" accept="image/*" class="hidden" onchange="uploadAndAnalyze(event, 'image')">
@@ -530,12 +533,16 @@
 
       if (mediaType === 'image') {
         const box = document.getElementById('image-result-box');
+        const imgUrl = (filename.startsWith('http') || filename.startsWith('/data/')) ? filename : `/data/${filename}`;
         box.innerHTML = `
           <div class="flex justify-between items-center">
             <span class="text-xs font-mono font-bold text-slate-400">ANALYZED: ${filename}</span>
             <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold ${badgeClass}">
               ${d.verdict.toUpperCase()} (${(d.confidence*100).toFixed(1)}%)
             </span>
+          </div>
+          <div class="my-2 flex justify-center">
+            <img src="${imgUrl}" class="h-28 w-auto object-contain rounded-xl border border-slate-700" onerror="this.style.display='none'">
           </div>
           <div class="text-xs text-slate-300 font-sans leading-relaxed p-3 bg-slate-900 rounded-xl border border-slate-800">
             ${d.explanation}
