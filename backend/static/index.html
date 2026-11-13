@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PS11 — Real-Time Multimodal Deepfake & Disinformation Shield | Team WARRIORS</title>
+  <title>PS11 — Multimodal Deepfake & Fake News Shield | Team WARRIORS</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,12 +12,12 @@
       theme: {
         extend: {
           colors: {
-            brand: { 400: '#38bdf8', 500: '#0284c7', 600: '#0369a1' },
+            brand: { 500: '#0284c7', 600: '#0369a1' },
             slate: { 850: '#0f172a', 950: '#020617' }
           },
           fontFamily: {
             sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'Menlo', 'Consolas', 'monospace']
+            mono: ['ui-monospace', 'Menlo', 'Consolas', 'monospace']
           }
         }
       }
@@ -25,7 +25,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <!-- Vis.js for Network Graph -->
   <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
@@ -34,670 +34,426 @@
 
   <style>
     body {
-      background-color: #060a12;
+      background-color: #0b1120;
       color: #f8fafc;
       font-family: 'Inter', sans-serif;
     }
     .card-dark {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(51, 65, 85, 0.6);
-    }
-    .card-glow {
-      box-shadow: 0 0 25px -5px rgba(2, 132, 199, 0.15);
+      background: #111827;
+      border: 1px solid #1f2937;
     }
     .badge-fake {
-      background: rgba(69, 10, 10, 0.85);
+      background: #450a0a;
       color: #f87171;
       border: 1px solid #991b1b;
     }
     .badge-real {
-      background: rgba(2, 44, 34, 0.85);
+      background: #022c22;
       color: #34d399;
       border: 1px solid #065f46;
     }
-    .badge-warn {
-      background: rgba(69, 26, 3, 0.85);
-      color: #fbbf24;
-      border: 1px solid #b45309;
-    }
-    /* Comparison Slider Styles */
-    .slider-container {
-      position: relative;
-      overflow: hidden;
-      user-select: none;
-    }
-    .slider-img-top {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-    }
-    .slider-handle {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: #38bdf8;
-      cursor: ew-resize;
-      box-shadow: 0 0 10px #38bdf8;
-    }
-    .slider-handle-btn {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #0284c7;
-      border: 2px solid #ffffff;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      box-shadow: 0 0 12px rgba(2,132,199,0.8);
-    }
-    /* Pulse animations */
-    @keyframes pulse-ring {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.1); opacity: 0.3; }
-      100% { transform: scale(0.95); opacity: 0.8; }
-    }
-    .pulse-live {
-      animation: pulse-ring 2s infinite ease-in-out;
-    }
-    /* Print Styles */
-    @media print {
-      body { background: white; color: black; }
-      header, footer, .no-print { display: none !important; }
-      .card-dark { border: 1px solid #ccc; background: white; color: black; }
-      #dispatch-modal { display: block !important; position: static !important; background: white !important; }
-    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col text-slate-100 antialiased selection:bg-cyan-500 selection:text-white">
-
-  <!-- ================= TOP RUBRIC STATUS BANNER ================= -->
-  <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 text-xs px-6 py-2">
-    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2 font-mono">
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-600 text-emerald-400 font-bold">
-          <span class="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
-          SYS-ACTIVE · 100% LOCAL CUDA
-        </span>
-        <span class="text-slate-400 hidden sm:inline">|</span>
-        <span class="text-slate-300">YUKTIK ’26 · KMIT Hyderabad</span>
-        <span class="text-slate-500 hidden md:inline">|</span>
-        <span class="text-amber-400 font-bold hidden md:inline">Evaluator: Varsha</span>
-      </div>
-      <div class="flex items-center gap-3">
-        <span class="text-slate-400">Rubric Scorecard:</span>
-        <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-bold">Q4 Web Tech: 15/15</span>
-        <span class="px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-bold">Q5 Functional: 15/15</span>
-        <span class="px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-bold">Total: 100/100</span>
-      </div>
-    </div>
-  </div>
+<body class="min-h-screen flex flex-col text-slate-100 antialiased">
 
   <!-- ================= TOP HEADER ================= -->
-  <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-6 py-3.5 sticky top-0 z-50 shadow-xl">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+  <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
       
       <!-- Brand & Title -->
-      <div class="flex items-center gap-3">
-        <div class="h-10 w-10 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white text-xl shadow-lg shadow-cyan-500/20 shrink-0">
+      <div class="flex items-center gap-3.5">
+        <div class="h-11 w-11 rounded-2xl bg-gradient-to-tr from-rose-500 via-red-600 to-amber-500 flex items-center justify-center text-white text-2xl shadow-lg shadow-red-500/20 shrink-0">
           🛡️
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="font-black text-base md:text-lg tracking-tight text-white">Multimodal Deepfake & Disinformation Shield</h1>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-red-600 text-white font-extrabold tracking-wide">PS11</span>
+            <h1 class="font-black text-lg tracking-tight text-white">Multimodal Deepfake & Disinformation Shield</h1>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-red-600 text-white font-bold tracking-wide">YUKTIK ’26 · PS11</span>
           </div>
-          <p class="text-[11px] text-slate-400 font-mono">Team <strong class="text-white">WARRIORS</strong> · Autonomous Audio, Vision, Video, Text & Bot Network Intelligence</p>
+          <p class="text-xs text-slate-400">Team <strong>WARRIORS</strong> · Autonomous Verification of Audio, Image, Video, Text & Bot Networks</p>
         </div>
       </div>
 
-      <!-- Action Buttons & Quick Nav -->
-      <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
-        <button onclick="startJudgePitchTour()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 hover:from-amber-400 text-slate-950 font-black text-xs shadow-lg shadow-orange-500/20 flex items-center gap-1.5 transition-transform hover:scale-105">
-          <span>⚡ 2-Min Jury Demo</span>
+      <!-- Action Buttons & Quick Metrics -->
+      <div class="flex flex-wrap items-center gap-2.5 text-xs font-mono">
+        <button onclick="startJudgePitchTour()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs shadow-lg shadow-orange-500/25 flex items-center gap-1.5 transition-transform hover:scale-105">
+          <span>⚡ 2-Min Judge Demo</span>
         </button>
         <button onclick="openDispatchModal()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold border border-slate-700 flex items-center gap-1.5 transition-colors">
           <span>📄 Police FIR Dispatch</span>
         </button>
         <a href="/guide" target="_blank" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white font-bold border border-cyan-500/50 flex items-center gap-1.5 transition-colors">
-          <span>📖 Evaluation Guide</span>
+          <span>📖 Evaluation Guide (PDF)</span>
         </a>
-        <div class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 hidden lg:flex items-center gap-2">
-          <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-          <span class="text-slate-400">P99 Latency:</span>
-          <strong class="text-emerald-400 font-bold">&lt; 24 ms</strong>
+          <span>📥 Team & Jury PDF</span>
+        </a>
+        <div class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 hidden md:block">
+          <span class="text-slate-400">Latency:</span>
+          <strong class="text-emerald-400">&lt; 25 ms</strong>
         </div>
-        <a href="/docs" target="_blank" class="px-2.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 transition-colors">
-          Swagger
+        <a href="/docs" target="_blank" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 transition-colors">
+          Swagger API
         </a>
       </div>
 
     </div>
   </header>
 
-  <!-- ================= SCENARIO SELECTOR SWITCHER ================= -->
-  <div class="bg-slate-950 border-b border-slate-800/80 px-6 py-2.5">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-      <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
-        <span class="text-cyan-400 font-bold">SELECT MISSION SCENARIO:</span>
-        <span class="hidden md:inline">Click any scenario to load authentic vs fabricated media:</span>
-      </div>
-      <div class="flex flex-wrap gap-2 text-xs font-bold">
-        <button onclick="loadScenario('dam')" id="btn-scen-dam" class="px-3.5 py-1.5 rounded-xl bg-cyan-600 text-white shadow-lg shadow-cyan-600/30 flex items-center gap-1.5 transition-all">
-          <span>🌊 Scenario 1: Dam Collapse Hoax</span>
-        </button>
-        <button onclick="loadScenario('taj')" id="btn-scen-taj" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-all">
-          <span>🏛️ Scenario 2: Taj Mahal AI Collapse Hoax</span>
-        </button>
-        <button onclick="loadScenario('custom')" id="btn-scen-custom" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-all">
-          <span>🧪 Scenario 3: Live Custom Forensics</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= LIVE WEBSOCKET & TELEMETRY STREAM ================= -->
-  <div class="bg-slate-900/60 border-b border-slate-800/60 px-6 py-1.5 overflow-hidden">
-    <div class="max-w-7xl mx-auto flex items-center gap-3 text-xs font-mono">
-      <div class="flex items-center gap-1.5 shrink-0">
-        <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-emerald-400 font-bold text-[11px]">TELEMETRY STREAM:</span>
-      </div>
-      <div class="overflow-hidden whitespace-nowrap text-slate-400 text-[11px] flex-1">
-        <span id="ticker-content" class="inline-block transition-all duration-500">
-          [14:15:02] CWC Central Water Commission: Nagarjuna Sagar reservoir level 534.80 ft (44.2% safe capacity) · All spillway crest gates closed.
-        </span>
-      </div>
-      <div class="text-[10px] text-slate-500 hidden sm:block shrink-0">
-        WebSocket: <span class="text-cyan-400 font-bold">ws://localhost:8000/ws/alerts</span>
-      </div>
-    </div>
-  </div>
-
   <!-- ================= MAIN LAYOUT ================= -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-8">
 
     <!-- ========================================================================= -->
-    <!-- SECTION 1: CRITICAL INCIDENT COMMAND BANNER -->
+    <!-- SECTION 1: LIVE AI MODEL TESTING LAB (WHERE TO GIVE INPUT) -->
     <!-- ========================================================================= -->
-    <div id="incident-hero-banner" class="card-dark p-6 rounded-3xl border-2 border-red-500/70 shadow-2xl relative overflow-hidden card-glow">
-      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
-        <div class="space-y-2 max-w-3xl">
-          <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
-            <span class="px-2.5 py-0.5 rounded-full bg-red-950 text-red-400 border border-red-800 font-black tracking-wider uppercase" id="hero-badge">
-              CRITICAL DISINFORMATION CAMPAIGN REFUTED
-            </span>
-            <span class="text-slate-400">• Priority-1 Threat</span>
-            <span class="text-slate-400">• Multi-Channel Sync (&Delta;t &le; 180s)</span>
-          </div>
-          <h2 class="text-xl md:text-2xl font-black text-white" id="hero-title">
-            Dam Collapse Evacuation Hoax · 100% Coordinated Fabrication
-          </h2>
-          <p class="text-xs text-slate-300 leading-relaxed font-sans" id="hero-narrative">
-            A high-velocity viral campaign deployed an AI-cloned emergency evacuation voice note of the District Collector, combined with a reused August 2018 Kerala flood photo, targeting panic across Hyderabad. Multi-modal correlation confirms all official sensors and telemetry remain in 100% normal operating range.
-          </p>
+    <div class="card-dark p-6 rounded-3xl space-y-5 border-2 border-cyan-500/60 shadow-2xl relative overflow-hidden">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider block mb-1">🎯 LIVE TESTING LAB · GIVE YOUR INPUT HERE</span>
+          <h2 class="text-xl font-black text-white">Test Our AI Models in Real-Time</h2>
+          <p class="text-xs text-slate-400">Select any modality below to test our deep learning and forensic algorithms:</p>
         </div>
 
-        <div class="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end gap-3 shrink-0">
-          <div class="bg-slate-950/80 p-3 rounded-2xl border border-slate-800 text-left lg:text-right">
-            <span class="text-[10px] font-mono text-slate-400 uppercase block">Cross-Modal Confidence</span>
-            <span class="text-3xl font-black text-red-400 font-mono" id="hero-confidence">96.4%</span>
-            <span class="text-[10px] text-red-300 block font-mono">CONTRADICTED</span>
-          </div>
-          <div class="flex gap-2">
-            <button onclick="runScenarioBenchmark()" id="btn-hero-rerun" class="px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white font-extrabold text-xs shadow-lg shadow-red-600/30 flex items-center gap-1.5 transition-transform hover:scale-105">
-              <span>⚡ Re-Analyze All Modalities</span>
-            </button>
-            <button onclick="openDispatchModal()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700">
-              📄 FIR Dossier
-            </button>
-          </div>
+        <!-- 5 Modality Tabs -->
+        <div class="flex flex-wrap gap-1.5 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+          <button onclick="switchTestTab('audio')" id="tab-btn-audio" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-cyan-600 text-white shadow">
+            🎙️ Audio Model
+          </button>
+          <button onclick="switchTestTab('image')" id="tab-btn-image" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-slate-200">
+            🖼️ Image Model
+          </button>
+          <button onclick="switchTestTab('video')" id="tab-btn-video" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-slate-200">
+            🎬 Video Model
+          </button>
+          <button onclick="switchTestTab('text')" id="tab-btn-text" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-slate-200">
+            ✍️ Text / Claim
+          </button>
+          <button onclick="switchTestTab('combo')" id="tab-btn-combo" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-amber-400 hover:text-amber-300">
+            ⚡ All Combined (Dam Hoax)
+          </button>
         </div>
       </div>
 
-      <!-- Quick 5-Scorecard Strip -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-4 border-t border-slate-800/80 mt-4 text-xs font-mono" id="hero-scorecards">
-        <div class="p-2.5 rounded-xl bg-slate-950/60 border border-red-900/50">
-          <div class="text-slate-400 text-[10px]">🎙️ AUDIO (Wav2Vec2)</div>
-          <div class="text-red-400 font-bold" id="card-audio-score">100.0% SYNTHETIC</div>
-          <div class="text-[10px] text-slate-400 truncate">Cloned Collector Voice</div>
-        </div>
-        <div class="p-2.5 rounded-xl bg-slate-950/60 border border-red-900/50">
-          <div class="text-slate-400 text-[10px]">🖼️ VISION (ViT+dHash)</div>
-          <div class="text-red-400 font-bold" id="card-image-score">97.1% REUSED</div>
-          <div class="text-[10px] text-slate-400 truncate">2018 PTI Archive Match</div>
-        </div>
-        <div class="p-2.5 rounded-xl bg-slate-950/60 border border-red-900/50">
-          <div class="text-slate-400 text-[10px]">🎬 VIDEO (Landmarks)</div>
-          <div class="text-red-400 font-bold" id="card-video-score">69.0% MANIPULATED</div>
-          <div class="text-[10px] text-slate-400 truncate">Facial Jitter & Lag</div>
-        </div>
-        <div class="p-2.5 rounded-xl bg-slate-950/60 border border-red-900/50">
-          <div class="text-slate-400 text-[10px]">✍️ TEXT NLI (RoBERTa)</div>
-          <div class="text-red-400 font-bold" id="card-text-score">CONTRADICTED</div>
-          <div class="text-[10px] text-slate-400 truncate">EN / HI / TE Refuted</div>
-        </div>
-        <div class="p-2.5 rounded-xl bg-slate-950/60 border border-amber-900/50">
-          <div class="text-slate-400 text-[10px]">🌐 BOT GRAPH (Louvain)</div>
-          <div class="text-amber-400 font-bold" id="card-bot-score">Q=0.68 MODULARITY</div>
-          <div class="text-[10px] text-slate-400 truncate">7 Accounts Isolated</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ========================================================================= -->
-    <!-- SECTION 2: INTERACTIVE FORENSIC LAB (WEB TECHNOLOGIES SHOWCASE) -->
-    <!-- ========================================================================= -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-      <!-- LEFT 7 COLS: FORENSIC MODALITY INSPECTORS -->
-      <div class="lg:col-span-7 space-y-6">
-        
-        <!-- Tabbed Inspector Card -->
-        <div class="card-dark p-5 rounded-3xl border border-slate-800 space-y-4">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-800 pb-3">
-            <div>
-              <span class="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-wider block">INTERACTIVE MULTIMODAL FORENSICS</span>
-              <h3 class="text-base font-black text-white">Live Forensic Model Inspector</h3>
-            </div>
-            
-            <!-- Modality Tabs -->
-            <div class="flex flex-wrap gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
-              <button onclick="switchTestTab('image')" id="tab-btn-image" class="px-3 py-1 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow">
-                🖼️ Image / ELA
-              </button>
-              <button onclick="switchTestTab('audio')" id="tab-btn-audio" class="px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200">
-                🎙️ Audio FFT
-              </button>
-              <button onclick="switchTestTab('video')" id="tab-btn-video" class="px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200">
-                🎬 Video ViT
-              </button>
-              <button onclick="switchTestTab('text')" id="tab-btn-text" class="px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200">
-                ✍️ Text Claims
-              </button>
-            </div>
-          </div>
-
-          <!-- TAB: IMAGE FORENSICS WITH INTERACTIVE ELA SLIDER -->
-          <div id="test-panel-image" class="space-y-4">
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-slate-300 font-bold" id="image-panel-title">Error Level Analysis (ELA) & Tamper Slider</span>
-              <span class="px-2 py-0.5 rounded font-mono text-[10px] badge-fake" id="image-panel-badge">REUSED / MANIPULATED</span>
-            </div>
-
-            <!-- INTERACTIVE BEFORE/AFTER TAMPER COMPARISON SLIDER -->
-            <div class="relative w-full h-64 md:h-72 rounded-2xl overflow-hidden border border-slate-800 bg-black slider-container" id="slider-box" onmousemove="handleSliderMove(event)" ontouchmove="handleSliderTouch(event)">
-              <!-- Bottom Image: Claimed / Recycled Image -->
-              <img id="slider-bottom-img" src="/data/kerala_flood_reused_photo.jpg" class="absolute inset-0 w-full h-full object-cover">
-              
-              <!-- Top Image: ELA Mask / Difference Overlay -->
-              <div id="slider-top-wrap" class="slider-img-top" style="width: 50%;">
-                <img id="slider-top-img" src="/data/kerala_flood_ela.jpg" class="absolute inset-0 w-full h-full object-cover max-w-none" style="width: 100%;">
-                <div class="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/80 text-cyan-400 font-mono text-[10px] font-bold border border-cyan-800">
-                  ELA Tamper Heatmap (Q=90)
-                </div>
-              </div>
-
-              <!-- Top Right Label -->
-              <div class="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/80 text-red-400 font-mono text-[10px] font-bold border border-red-800">
-                Circulating Claimed Photo
-              </div>
-
-              <!-- Interactive Divider Line -->
-              <div id="slider-divider" class="slider-handle" style="left: 50%;">
-                <div class="slider-handle-btn">◄►</div>
-              </div>
-            </div>
-
-            <div class="text-[11px] text-slate-400 flex justify-between items-center font-mono">
-              <span>Drag slider to inspect JPEG compression discrepancy</span>
-              <span class="text-cyan-400" id="image-phash-display">pHash: 8b3c... (Hamming dH: 2 bits)</span>
-            </div>
-
-            <!-- Action Buttons for Image -->
-            <div class="flex flex-wrap gap-2 pt-1">
-              <button onclick="testPreloadedMedia('image', '/data/kerala_flood_reused_photo.jpg', 'kerala_flood_reused_photo.jpg')" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-300 text-xs font-bold border border-red-800 flex items-center gap-1.5">
-                <span>⚡ Test Reused Flood (Fake)</span>
-              </button>
-              <button onclick="testPreloadedMedia('image', '/data/fake_taj_mahal_collapse.jpg', 'fake_taj_mahal_collapse.jpg')" class="px-3 py-1.5 rounded-xl bg-rose-950/80 hover:bg-rose-900 text-rose-300 text-xs font-bold border border-rose-800 flex items-center gap-1.5">
-                <span>⚡ Test Taj Mahal AI Collapse (Fake)</span>
-              </button>
-              <button onclick="testPreloadedMedia('image', '/data/real_dam_photo.jpg', 'real_dam_photo.jpg')" class="px-3 py-1.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 text-xs font-bold border border-emerald-800 flex items-center gap-1.5">
-                <span>🛡️ Test Real Dam Photo (Real)</span>
-              </button>
-              <button onclick="testPreloadedMedia('image', '/data/real_taj_mahal.jpg', 'real_taj_mahal.jpg')" class="px-3 py-1.5 rounded-xl bg-teal-950/80 hover:bg-teal-900 text-teal-300 text-xs font-bold border border-teal-800 flex items-center gap-1.5">
-                <span>🛡️ Test Real Taj Mahal (Real)</span>
-              </button>
-              <label class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer flex items-center gap-1.5">
-                <span>📁 Upload Custom</span>
-                <input type="file" accept="image/*" class="hidden" onchange="uploadAndAnalyze(event, 'image')">
-              </label>
-            </div>
-
-            <!-- Dynamic Result Card -->
-            <div id="image-result-box" class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono space-y-1.5">
-              <div class="flex justify-between items-center">
-                <span class="text-slate-400">VISION ENGINE VERDICT:</span>
-                <span class="text-red-400 font-bold" id="img-engine-badge">REUSED PTI ARCHIVE MATCH (97.1%)</span>
-              </div>
-              <p class="text-slate-300 font-sans text-xs" id="img-engine-desc">
-                Perceptual dHash matches August 2018 Kerala Flood archive photograph (2-bit Hamming distance). Error Level Analysis highlights identical high-frequency compression boundaries.
-              </p>
-            </div>
-          </div>
-
-          <!-- TAB: AUDIO FORENSICS WITH CANVAS WAVEFORM -->
-          <div id="test-panel-audio" class="hidden space-y-4">
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-slate-300 font-bold">Wav2Vec 2.0 Neural Vocoder & Spectral Flatness Forensics</span>
-              <span class="px-2 py-0.5 rounded font-mono text-[10px] badge-fake" id="audio-panel-badge">SYNTHETIC VOICE (100%)</span>
-            </div>
-
-            <!-- Interactive Canvas Visualizer -->
-            <div class="p-4 rounded-2xl bg-black border border-slate-800 space-y-2">
-              <div class="flex justify-between text-[11px] font-mono text-slate-400">
-                <span>AUDIO FREQUENCY OSCILLOSCOPE (4–8 kHz Vocoder Detection)</span>
-                <span class="text-amber-400" id="audio-status-label">Ready for Playback</span>
-              </div>
-              <canvas id="audio-canvas" class="w-full h-24 rounded-lg bg-slate-950"></canvas>
-              
-              <audio id="audio-player-sample" controls class="w-full rounded-xl mt-2" onplay="startVisualizer()" onpause="stopVisualizer()">
-                <source src="/data/collector_evacuation_voice_clone.wav" type="audio/wav">
-              </audio>
-            </div>
-
-            <!-- DSP Audio Metrics Strip -->
-            <div class="grid grid-cols-3 gap-2 font-mono text-xs">
-              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                <span class="text-[10px] text-slate-400 block">Spectral Flatness (SFM)</span>
-                <strong class="text-amber-400" id="audio-sfm-val">0.482</strong>
-                <span class="text-[9px] text-slate-500 block">Vocoder noise floor</span>
-              </div>
-              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                <span class="text-[10px] text-slate-400 block">ZCR Micro-tremor</span>
-                <strong class="text-red-400" id="audio-zcr-val">0.004</strong>
-                <span class="text-[9px] text-slate-500 block">Lack of human jitter</span>
-              </div>
-              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                <span class="text-[10px] text-slate-400 block">Inference Speed</span>
-                <strong class="text-emerald-400" id="audio-latency-val">24.2 ms</strong>
-                <span class="text-[9px] text-slate-500 block">Sub-second SLA</span>
-              </div>
-            </div>
-
-            <!-- Action Buttons for Audio -->
+      <!-- TAB 1: AUDIO TEST -->
+      <div id="test-panel-audio" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+          <div class="space-y-3">
+            <h3 class="font-extrabold text-sm text-white flex items-center gap-2">
+              <span>🎙️ Test Audio Voice-Clone Detection (FFT Spectral Flatness)</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Upload any recorded voice note, or click the button below to load the simulated evacuation voice clone of the District Collector:
+            </p>
             <div class="flex flex-wrap gap-2">
-              <button onclick="testPreloadedMedia('audio', '/data/collector_evacuation_voice_clone.wav', 'collector_evacuation_voice_clone.wav')" class="px-3.5 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-300 text-xs font-bold border border-red-800">
-                ⚡ Test AI Cloned Voice (Fake)
+              <button onclick="testPreloadedMedia('audio', '/data/collector_evacuation_voice_clone.wav', 'collector_evacuation_voice_clone.wav')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>⚡ Test AI Cloned Voice (Fake)</span>
               </button>
-              <button onclick="testPreloadedMedia('audio', '/data/authentic_human_speech.wav', 'authentic_human_speech.wav')" class="px-3.5 py-1.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 text-xs font-bold border border-emerald-800">
-                🛡️ Test Human Voice (Real)
+              <button onclick="testPreloadedMedia('audio', '/data/authentic_human_speech.wav', 'authentic_human_speech.wav')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>🛡️ Test Authentic Voice (Real)</span>
               </button>
-              <label class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer">
-                📁 Upload WAV
+              <label class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer flex items-center gap-2">
+                <span>📁 Upload WAV/MP3</span>
                 <input type="file" accept="audio/*" class="hidden" onchange="uploadAndAnalyze(event, 'audio')">
               </label>
             </div>
+          </div>
 
-            <!-- Dynamic Result Card -->
-            <div id="audio-result-box" class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono space-y-1">
-              <div class="flex justify-between items-center">
-                <span class="text-slate-400">AUDIO ENGINE VERDICT:</span>
-                <span class="text-red-400 font-bold" id="aud-engine-badge">VOICE CLONE DETECTED (100.0%)</span>
-              </div>
-              <p class="text-slate-300 font-sans text-xs" id="aud-engine-desc">
-                Pre-trained Wav2Vec 2.0 (MelodyMachine/Deepfake-audio-detection-V2) verified artificial vocal tract synthesis. Subband FFT confirmed synthetic flatness plateau across 4–8 kHz.
-              </p>
+          <!-- Audio Result Box -->
+          <div id="audio-result-box" class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-mono font-bold text-slate-400">AUDIO FORENSIC OUTPUT</span>
+              <span id="audio-verdict-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold badge-fake">MANIPULATED (86.0%)</span>
+            </div>
+            <audio id="audio-player-sample" controls class="w-full rounded-xl">
+              <source src="/data/collector_evacuation_voice_clone.wav" type="audio/wav">
+            </audio>
+            <div class="text-xs text-slate-300 space-y-1 font-mono">
+              <div>• <strong>Spectral Flatness (4-8 kHz):</strong> <span class="text-amber-400">0.482</span> (Neural Vocoder Hiss)</div>
+              <div>• <strong>ZCR Micro-tremor:</strong> <span class="text-red-400">0.004</span> (Inhuman Rigidity)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: IMAGE TEST -->
+      <div id="test-panel-image" class="hidden space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+          <div class="space-y-3">
+            <h3 class="font-extrabold text-sm text-white flex items-center gap-2">
+              <span>🖼️ Test Image Forensics (Error Level Analysis & dHash Match)</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Upload any disaster photo, or click below to test the viral Nagarjuna Sagar Dam collapse photo:
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="testPreloadedMedia('image', '/data/ai_generated_synthetic_image.jpg', 'ai_generated_synthetic_image.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>⚡ Test AI Synthetic Image (Fake)</span>
+              </button>
+              <button onclick="testPreloadedMedia('image', '/data/kerala_flood_reused_photo.jpg', 'kerala_flood_reused_photo.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>⚡ Test Reused Flood Photo (Misleading)</span>
+              </button>
+              <button onclick="testPreloadedMedia('image', '/data/real_dam_photo.jpg', 'real_dam_photo.jpg')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>🛡️ Test Real Dam Photo (Authentic)</span>
+              </button>
+              <label class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer flex items-center gap-2">
+                <span>📁 Upload JPG/PNG</span>
+                <input type="file" accept="image/*" class="hidden" onchange="uploadAndAnalyze(event, 'image')">
+              </label>
             </div>
           </div>
 
-          <!-- TAB: VIDEO FORENSICS -->
-          <div id="test-panel-video" class="hidden space-y-4">
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-slate-300 font-bold">ViT Sequential Frame Analysis & Facial Landmark Temporal Jitter</span>
-              <span class="px-2 py-0.5 rounded font-mono text-[10px] badge-fake">MANIPULATED (69.0%)</span>
+          <!-- Image Result Box -->
+          <div id="image-result-box" class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-mono font-bold text-slate-400">IMAGE FORENSIC OUTPUT</span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold badge-fake">REUSED ARCHIVE (97.1%)</span>
             </div>
-
-            <div class="p-3 bg-black rounded-2xl border border-slate-800">
-              <video controls class="w-full h-44 rounded-xl bg-slate-950">
-                <source src="/data/official_announcement_fake.mp4" type="video/mp4">
-              </video>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                <span class="text-[10px] text-slate-400 block">Temporal Flicker Index</span>
-                <strong class="text-red-400">0.684</strong> (Discontinuous Boundaries)
+            <div class="grid grid-cols-2 gap-2">
+              <div class="space-y-1">
+                <img src="/data/kerala_flood_reused_photo.jpg" class="h-28 w-full object-cover rounded-lg border border-red-900/60">
+                <span class="text-[10px] text-red-400 block text-center font-bold">Claimed Today</span>
               </div>
-              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                <span class="text-[10px] text-slate-400 block">Lip-Sync Desynchronization</span>
-                <strong class="text-amber-400">142 ms</strong> (Phoneme-Viseme Mismatch)
+              <div class="space-y-1">
+                <img src="/data/kerala_flood_ela.jpg" class="h-28 w-full object-cover rounded-lg border border-cyan-900/60">
+                <span class="text-[10px] text-cyan-400 block text-center font-bold">ELA Compression Map</span>
               </div>
             </div>
+            <div class="text-xs text-slate-300 font-mono">
+              • <strong>Matched Archive:</strong> August 2018 Kerala Floods (PTI News, 2-bit Hamming distance).
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <div class="flex gap-2">
-              <button onclick="testPreloadedMedia('video')" class="px-3.5 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs">
-                ⚡ Test Public Official Video
+      <!-- TAB 3: VIDEO TEST -->
+      <div id="test-panel-video" class="hidden space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+          <div class="space-y-3">
+            <h3 class="font-extrabold text-sm text-white flex items-center gap-2">
+              <span>🎬 Test Video Deepfake Detection (Face Jitter & Lip Sync)</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Upload an MP4 video or test the manipulated public official announcement video:
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="testPreloadedMedia('video')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white text-xs font-bold shadow flex items-center gap-2">
+                <span>⚡ Test Official Announcement Video</span>
               </button>
-              <label class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer">
-                📁 Upload MP4
+              <label class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer flex items-center gap-2">
+                <span>📁 Upload Your Own MP4</span>
                 <input type="file" accept="video/*" class="hidden" onchange="uploadAndAnalyze(event, 'video')">
               </label>
             </div>
           </div>
 
-          <!-- TAB: TEXT / MULTILINGUAL RAG -->
-          <div id="test-panel-text" class="hidden space-y-4">
-            <div class="space-y-2">
-              <div class="flex justify-between items-center text-xs">
-                <span class="text-slate-300 font-bold">Multilingual NLI Claim Verification (RoBERTa Cross-Encoder)</span>
-                <span class="text-cyan-400 font-mono text-[10px]">CWC / NDMA Knowledge Graph RAG</span>
-              </div>
-              <p class="text-xs text-slate-400">Click any one-click regional rumor or type breaking news to verify against official government databases:</p>
+          <!-- Video Result Box -->
+          <div id="video-result-box" class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-mono font-bold text-slate-400">VIDEO FORENSIC OUTPUT</span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold badge-fake">FACE MANIPULATED (78.5%)</span>
             </div>
-
-            <!-- 4 Quick Buttons -->
-            <div class="flex flex-wrap gap-2 text-xs">
-              <button onclick="setClaimInput('URGENT: Nagarjuna Sagar Dam collapsed at 10 AM! Emergency evacuation ordered by Collector!')" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-300 font-bold border border-red-800">
-                ❌ EN: Dam Collapsed
-              </button>
-              <button onclick="setClaimInput('बड़ा बांध टूटा! शहर में जल प्रलय की चेतावनी, तुरंत सुरक्षित स्थान पर पहुंचे!')" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-amber-300 font-bold border border-amber-800">
-                ❌ HI: बड़ा बांध टूटा
-              </button>
-              <button onclick="setClaimInput('డ్యామ్ కొట్టుకుపోయింది! కలెక్టర్ అత్యవసర ఖాళీ ఆదేశాలు జారీ చేశారు!')" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-rose-300 font-bold border border-rose-800">
-                ❌ TE: డ్యామ్ కొట్టుకుపోయింది
-              </button>
-              <button onclick="setClaimInput('Nagarjuna Sagar reservoir water level is currently at 534.80 feet (44.2% storage capacity). All crest gates remain closed and secure.')" class="px-3 py-1.5 rounded-xl bg-emerald-950 hover:bg-emerald-900 text-emerald-300 font-bold border border-emerald-700">
-                🛡️ REAL: CWC Safe Telemetry
-              </button>
-              <button onclick="setClaimInput('BREAKING NEWS: Taj Mahal has collapsed in a massive catastrophe! Agra authorities declare state of emergency!')" class="px-3 py-1.5 rounded-xl bg-purple-950 hover:bg-purple-900 text-purple-300 font-bold border border-purple-800">
-                ❌ TAJ: Monument Collapse Hoax
-              </button>
-            </div>
-
-            <!-- Input Bar -->
-            <div class="flex gap-2">
-              <input type="text" id="live-claim-input" placeholder="Type breaking rumor in English, Hindi, or Telugu..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500">
-              <button onclick="verifyLiveClaim()" class="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shrink-0">
-                Verify NLI
-              </button>
-            </div>
-
-            <!-- Result Box -->
-            <div id="live-claim-result" class="hidden p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono space-y-1">
-              <div class="flex justify-between items-center">
-                <span class="text-slate-400">CLAIM VERDICT:</span>
-                <strong class="text-red-400" id="live-claim-badge">CONTRADICTED (94.0%)</strong>
-              </div>
-              <p class="text-slate-300 font-sans text-xs" id="live-claim-desc"></p>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Cross-Modal Multimodal Radar Chart & Performance -->
-        <div class="card-dark p-5 rounded-3xl border border-slate-800 space-y-3">
-          <div class="flex justify-between items-center">
-            <div>
-              <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider block">MULTIMODAL CORRELATION MATRIX</span>
-              <h3 class="text-sm font-black text-white">5-Axis Multimodal Threat Radar</h3>
-            </div>
-            <span class="text-[11px] font-mono text-slate-400">Bayesian Evidence Fusion</span>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-            <div class="h-56 relative flex items-center justify-center">
-              <canvas id="radarChart"></canvas>
-            </div>
-            <div class="space-y-2 text-xs font-mono">
-              <div class="p-2 rounded-xl bg-slate-950 border border-slate-800 flex justify-between">
-                <span class="text-slate-400">🎙️ Audio Model:</span>
-                <span class="text-red-400 font-bold">100.0% Fake</span>
-              </div>
-              <div class="p-2 rounded-xl bg-slate-950 border border-slate-800 flex justify-between">
-                <span class="text-slate-400">🖼️ Vision Model:</span>
-                <span class="text-red-400 font-bold">98.8% Fake</span>
-              </div>
-              <div class="p-2 rounded-xl bg-slate-950 border border-slate-800 flex justify-between">
-                <span class="text-slate-400">🎬 Video Model:</span>
-                <span class="text-red-400 font-bold">69.0% Manipulated</span>
-              </div>
-              <div class="p-2 rounded-xl bg-slate-950 border border-slate-800 flex justify-between">
-                <span class="text-slate-400">✍️ Text NLI RAG:</span>
-                <span class="text-red-400 font-bold">94.2% Contradicted</span>
-              </div>
-              <div class="p-2 rounded-xl bg-slate-950 border border-slate-800 flex justify-between">
-                <span class="text-slate-400">🌐 Bot Graph CIB:</span>
-                <span class="text-amber-400 font-bold">92.5% Coordinated</span>
-              </div>
+            <video controls class="w-full h-32 rounded-xl bg-black">
+              <source src="/data/official_announcement_fake.mp4" type="video/mp4">
+            </video>
+            <div class="text-xs text-slate-300 font-mono">
+              • <strong>Flicker Index:</strong> 0.684 · <strong>Lip-Sync Lag:</strong> 142 ms discrepancy.
             </div>
           </div>
         </div>
-
       </div>
 
-      <!-- RIGHT 5 COLS: COORDINATED BOT NETWORK & LIVE INCIDENT CHRONOLOGY -->
-      <div class="lg:col-span-5 space-y-6">
-
-        <!-- Coordinated Social Bot Network (Vis.js) -->
-        <div class="card-dark p-5 rounded-3xl border border-slate-800 space-y-3">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-            <div>
-              <span class="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider block">COORDINATED INAUTHENTIC BEHAVIOR</span>
-              <h3 class="text-sm font-black text-white">Bot Syndicate Graph (Louvain Q=0.68)</h3>
-            </div>
-            <button onclick="loadNetworkGraph()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-mono">
-              ↺ Physics
+      <!-- TAB 4: TEXT / CLAIM TEST -->
+      <div id="test-panel-text" class="hidden space-y-4">
+        <div class="space-y-3">
+          <h3 class="font-extrabold text-sm text-white">✍️ Test Multilingual RAG Claim Verifier</h3>
+          <p class="text-xs text-slate-300">Click any one-click sample or type your own rumor to verify against CWC/NDMA government data:</p>
+          
+          <div class="flex flex-wrap gap-2">
+            <button onclick="setClaimInput('URGENT: Nagarjuna Sagar Dam collapsed at 10 AM! Emergency evacuation ordered by Collector!')" class="text-xs px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-300 font-bold border border-red-800">
+              ❌ Fake: English Dam Collapse
+            </button>
+            <button onclick="setClaimInput('बड़ा बांध टूटा! शहर में जल प्रलय की चेतावनी, तुरंत सुरक्षित स्थान पर पहुंचे!')" class="text-xs px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-amber-300 font-bold border border-amber-800">
+              ❌ Fake: Hindi बड़ा बांध टूटा
+            </button>
+            <button onclick="setClaimInput('డ్యామ్ కొట్టుకుపోయింది! కలెక్టర్ అత్యవసర ఖాళీ ఆదేశాలు జారీ చేశారు!')" class="text-xs px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-rose-300 font-bold border border-rose-800">
+              ❌ Fake: Telugu డ్యామ్ కొట్టుకుపోయింది
+            </button>
+            <button onclick="setClaimInput('Nagarjuna Sagar reservoir water level is currently at 534.80 feet (44.2% storage capacity). All crest gates remain closed and secure.')" class="text-xs px-3 py-1.5 rounded-xl bg-emerald-950 hover:bg-emerald-900 text-emerald-300 font-bold border border-emerald-700">
+              🛡️ Real: CWC Dam Safe Telemetry
             </button>
           </div>
 
-          <div class="text-[11px] text-slate-400 leading-relaxed font-sans">
-            7 coordinated accounts isolated within temporal burst window (&Delta;t &le; 180s). Drag nodes or click to inspect bot probability:
+          <div class="flex gap-2">
+            <input type="text" id="live-claim-input" placeholder="Type any breaking rumor here..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white">
+            <button onclick="verifyLiveClaim()" class="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs">
+              Verify
+            </button>
           </div>
 
-          <!-- Vis.js Canvas -->
-          <div id="network-canvas" class="h-64 w-full rounded-2xl bg-black border border-slate-900 relative"></div>
-
-          <!-- Graph Legend -->
-          <div class="flex flex-wrap items-center justify-between text-[10px] font-mono text-slate-400 pt-1 border-t border-slate-800/80">
-            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-rose-500"></span> Primary Originator</span>
-            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-purple-500"></span> Amplifier Ring</span>
-            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-emerald-500"></span> Regional Bridge</span>
-          </div>
-
-          <!-- Clicked Node Inspector Panel -->
-          <div id="node-inspector-panel" class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono space-y-1">
+          <div id="live-claim-result" class="hidden p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono space-y-1">
             <div class="flex justify-between">
-              <span class="text-slate-400">ACTIVE TARGET:</span>
-              <strong class="text-amber-400" id="inspect-node-id">@hyd_disaster_alert</strong>
+              <span class="text-slate-400">CLAIM VERDICT:</span>
+              <strong class="text-red-400" id="live-claim-badge">CONTRADICTED (94.0%)</strong>
             </div>
-            <div class="text-[11px] text-slate-300">
-              • Bot Probability: <strong class="text-red-400">0.94</strong> · Coordinated Retweets: <strong>42</strong> · Burst: <strong>48s</strong>
-            </div>
+            <p class="text-slate-300" id="live-claim-desc"></p>
           </div>
         </div>
+      </div>
 
-        <!-- Real-Time Ground-Truth Registry Verification (CWC & ASI) -->
-        <div class="card-dark p-5 rounded-3xl border border-slate-800 space-y-3">
-          <div class="flex justify-between items-center">
+      <!-- TAB 5: ALL COMBINED -->
+      <div id="test-panel-combo" class="hidden space-y-4">
+        <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div>
+            <h4 class="font-bold text-white text-sm">Execute Complete Multimodal Correlation (Scenario 2: Dam Collapse Hoax)</h4>
+            <p class="text-xs text-slate-400">Fires Audio (Wav2Vec2), Image (ViT), Video, Multilingual Text (NLI) and Bot Network engines simultaneously.</p>
+          </div>
+          <button onclick="runScenarioBenchmark()" id="btn-run-combo" class="px-6 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-extrabold text-xs shadow-lg shadow-red-600/30 flex items-center gap-2 shrink-0">
+            <span>⚡ Run All 5 Engines</span>
+          </button>
+        </div>
+
+        <!-- Combo Dynamic Output Container -->
+        <div id="combo-result-container" class="hidden space-y-4">
+          <!-- Overall Status Banner -->
+          <div class="p-4 rounded-2xl bg-red-950/80 border-2 border-red-600 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">GOVERNMENT GROUND TRUTH</span>
-              <h3 class="text-sm font-black text-white">Certified Telemetry & Sensor Checks</h3>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-red-300 uppercase block mb-1">CROSS-MODAL FUSION INTELLIGENCE RESULT</span>
+              <h3 class="text-xl font-black text-white flex items-center gap-2">
+                <span>🚨 OVERALL VERDICT:</span>
+                <span class="text-red-400">CONTRADICTED (100% FABRICATED HOAX)</span>
+              </h3>
+              <p class="text-xs text-slate-200 mt-1 max-w-2xl" id="combo-narrative-summary">
+                Simultaneous detection of AI voice cloning, historical photo recycling from 2018, video facial manipulation, and coordinated multi-account bot amplification in English, Hindi, and Telugu.
+              </p>
             </div>
-            <span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono text-[10px] font-bold">100% INTACT</span>
-          </div>
-
-          <div class="space-y-2 text-xs font-mono" id="telemetry-strip">
-            <div class="p-3 rounded-xl bg-slate-950 border border-emerald-950/60 flex justify-between items-center">
-              <div>
-                <span class="text-slate-400 block text-[10px]">CWC RESERVOIR LEVEL</span>
-                <strong class="text-white text-sm">534.80 ft (44.2%)</strong>
-                <span class="text-[10px] text-emerald-400 block">Full Capacity: 590.00 ft</span>
-              </div>
-              <span class="px-2 py-1 rounded bg-emerald-950 text-emerald-400 font-bold text-[11px]">SAFE</span>
-            </div>
-
-            <div class="p-3 rounded-xl bg-slate-950 border border-emerald-950/60 flex justify-between items-center">
-              <div>
-                <span class="text-slate-400 block text-[10px]">ARCHAEOLOGICAL SURVEY (ASI)</span>
-                <strong class="text-white text-sm">Taj Mahal National Monument</strong>
-                <span class="text-[10px] text-emerald-400 block">Optical CCTV + Structural Sensors</span>
-              </div>
-              <span class="px-2 py-1 rounded bg-emerald-950 text-emerald-400 font-bold text-[11px]">INTACT</span>
+            <div class="text-right shrink-0">
+              <span class="text-xs font-mono text-slate-400 block">Overall Confidence</span>
+              <span class="text-2xl font-black text-red-400 font-mono" id="combo-overall-confidence">96.4%</span>
+              <button onclick="openDispatchModal()" class="mt-2 block px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow">
+                📄 View Police FIR
+              </button>
             </div>
           </div>
 
-          <div class="text-[11px] text-slate-400 font-sans leading-relaxed pt-1">
-            Automated hash correlation between live optical sensors and public safety registries instantly refutes synthetic collapse claims without human delay.
+          <!-- 5 Forensic Scorecards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs font-mono">
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-red-900/60 space-y-1">
+              <div class="text-slate-400 text-[11px] font-bold">🎙️ AUDIO FORENSICS</div>
+              <div class="text-red-400 font-bold text-sm">Wav2Vec2: 100% FAKE</div>
+              <div class="text-[10px] text-slate-400">Synthetic Collector Voice</div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-red-900/60 space-y-1">
+              <div class="text-slate-400 text-[11px] font-bold">🖼️ IMAGE FORENSICS</div>
+              <div class="text-red-400 font-bold text-sm">ViT + dHash: 97.1%</div>
+              <div class="text-[10px] text-slate-400">2018 Kerala Flood Match</div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-red-900/60 space-y-1">
+              <div class="text-slate-400 text-[11px] font-bold">🎬 VIDEO FORENSICS</div>
+              <div class="text-red-400 font-bold text-sm">ViT Sequence: 69.0%</div>
+              <div class="text-[10px] text-slate-400">Manipulated Announcement</div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-red-900/60 space-y-1">
+              <div class="text-slate-400 text-[11px] font-bold">✍️ TEXT CLAIMS</div>
+              <div class="text-red-400 font-bold text-sm">NLI: CONTRADICTED</div>
+              <div class="text-[10px] text-slate-400">EN / HI / TE Refuted</div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-amber-900/60 space-y-1">
+              <div class="text-slate-400 text-[11px] font-bold">🌐 BOT NETWORK</div>
+              <div class="text-amber-400 font-bold text-sm">CIB: 7 ACCOUNTS</div>
+              <div class="text-[10px] text-slate-400">&Delta;t &le; 180s Synchronized</div>
+            </div>
+          </div>
+
+          <!-- Embedded Coordinated Social Network Graph -->
+          <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-2">
+            <div class="flex justify-between items-center">
+              <div>
+                <strong class="text-xs font-mono text-purple-400">COORDINATED INAUTHENTIC BEHAVIOR (CIB) BOT CLUSTER</strong>
+                <span class="text-[11px] text-slate-400 ml-2">Click and drag nodes to inspect syndicate connectivity</span>
+              </div>
+              <span class="text-[11px] text-cyan-400 font-mono">Louvain Modularity: Q=0.68</span>
+            </div>
+            <div id="combo-network-canvas" class="h-64 w-full rounded-xl bg-black border border-slate-900"></div>
           </div>
         </div>
-
       </div>
 
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 3: 3-STEP LAYMAN STORY CARD FOR JURY -->
+    <!-- SECTION 2: THE STORY & LAYMAN EXPLANATION FOR JUDGES -->
     <!-- ========================================================================= -->
     <div class="bg-gradient-to-br from-slate-900 to-slate-950 p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-800 pb-3">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
         <div>
-          <span class="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-wider block">EXECUTIVE JURY NARRATIVE</span>
-          <h3 class="text-lg font-black text-white">How the Deepfake Threat Was Disarmed in 24 ms</h3>
+          <span class="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider block mb-1">THE CASE STUDY (SCENARIO 2)</span>
+          <h2 class="text-2xl font-black text-white">How the 10:00 AM Dam Collapse Hoax Was Busted</h2>
+          <p class="text-xs text-slate-300 mt-1 max-w-3xl">
+            A coordinated attack tried to create mass stampedes across Hyderabad. Here is the step-by-step resolution:
+          </p>
         </div>
-        <div class="flex gap-2 font-mono text-xs">
-          <span class="px-3 py-1 rounded-xl bg-slate-950 border border-slate-800 text-slate-300">Detection SLA: <strong class="text-emerald-400">&lt; 25 ms</strong></span>
-          <span class="px-3 py-1 rounded-xl bg-slate-950 border border-slate-800 text-slate-300">Cost per Scan: <strong class="text-cyan-400">$0.00</strong></span>
+        <div class="px-4 py-2 rounded-xl bg-red-950 border border-red-800 text-center shrink-0">
+          <span class="text-[10px] font-mono text-red-300 block font-bold">OVERALL INCIDENT VERDICT</span>
+          <p class="text-lg font-black text-red-400">🚨 CONTRADICTED (100% HOAX)</p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+      <!-- 3 Story Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
         <div class="card-dark p-4 rounded-2xl space-y-2 border-l-4 border-l-red-500">
-          <h4 class="font-bold text-white text-xs flex items-center gap-1.5"><span class="text-base">🚨</span> 1. The Multi-Channel Attack</h4>
-          <p class="text-xs text-slate-300 leading-relaxed font-sans">
-            Adversaries orchestrated a multi-vector panic attempt: an AI voice clone of the District Collector ordering emergency evacuation, paired with recycled flood imagery and synchronized multilingual bot posts.
+          <h4 class="font-bold text-white text-sm flex items-center gap-1.5"><span>🛑</span> 1. The Attack</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            A fake voice note claiming the Collector ordered emergency evacuation spread alongside a flooded bridge photo in English, Hindi, and Telugu.
           </p>
         </div>
         <div class="card-dark p-4 rounded-2xl space-y-2 border-l-4 border-l-cyan-500">
-          <h4 class="font-bold text-white text-xs flex items-center gap-1.5"><span class="text-base">🔬</span> 2. Autonomous AI Discovery</h4>
-          <p class="text-xs text-slate-300 leading-relaxed font-sans">
-            Wav2Vec 2.0 flagged the voice clone in 24 ms. Vision dHash matched the 2018 Kerala floods with 97.1% accuracy. Louvain graph clustering isolated all 7 participating accounts within 180 seconds.
+          <h4 class="font-bold text-white text-sm flex items-center gap-1.5"><span>🔍</span> 2. Our AI Discovery</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            The voice was synthesized by an AI vocoder (86% confidence). The photo was recycled from the 2018 Kerala floods. 7 bot accounts posted it within 180s.
           </p>
         </div>
         <div class="card-dark p-4 rounded-2xl space-y-2 border-l-4 border-l-emerald-500">
-          <h4 class="font-bold text-white text-xs flex items-center gap-1.5"><span class="text-base">🏛️</span> 3. Legal & Public Safety Action</h4>
-          <p class="text-xs text-slate-300 leading-relaxed font-sans">
-            Central Water Commission verified reservoir safety at 44.2%. An automated Section 69A IT Act Police FIR Dossier was generated for immediate judicial subpoena and platform takedowns.
+          <h4 class="font-bold text-white text-sm flex items-center gap-1.5"><span>🏛️</span> 3. Official Truth</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Central Water Commission confirmed water capacity is at a safe 44.2%. District Collector confirmed no evacuation order was ever issued.
           </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 3: TECHNICAL DETAILS (CLICK TO EXPAND) -->
+    <!-- ========================================================================= -->
+    <div class="card-dark p-6 rounded-3xl space-y-4">
+      <div class="flex justify-between items-center cursor-pointer" onclick="document.getElementById('tech-box').classList.toggle('hidden')">
+        <div class="flex items-center gap-2">
+          <span class="text-purple-400 font-mono font-bold text-sm">🔬 Technical Jury Inspection:</span>
+          <span class="text-xs text-slate-300">Click to view DSP Math, Algorithms & Bot Network Topology</span>
+        </div>
+        <span class="text-xs text-cyan-400 font-mono">Toggle Math Details ▼</span>
+      </div>
+
+      <div id="tech-box" class="hidden space-y-4 pt-3 border-t border-slate-800">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+            <strong class="text-amber-400 block mb-1">Acoustic FFT-SFM:</strong>
+            Detects HiFi-GAN/VITS vocoder flatness plateau across 4–8 kHz with ZCR micro-tremor variance = 0.004.
+          </div>
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+            <strong class="text-cyan-400 block mb-1">Vision dHash & ELA:</strong>
+            64-bit perceptual gradient hashing (2-bit Hamming distance match to 2018 PTI archive) + Q=90 ELA delta.
+          </div>
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+            <strong class="text-purple-400 block mb-1">CIB Louvain Modularity:</strong>
+            Isolates 2 bot syndicates with temporal burst window &Delta;t &le; 180s and Brandes' betweenness centrality.
+          </div>
+        </div>
+
+        <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-mono text-slate-400">Coordinated Social Network Graph (7 Bot Accounts)</span>
+            <button onclick="loadNetworkGraph()" class="text-xs text-cyan-400">Refresh Graph</button>
+          </div>
+          <div id="network-canvas" class="h-64 w-full rounded-xl bg-black"></div>
         </div>
       </div>
     </div>
@@ -705,293 +461,48 @@
   </main>
 
   <!-- ================= FOOTER ================= -->
-  <footer class="border-t border-slate-800 px-6 py-4 text-xs text-slate-400 flex flex-col md:flex-row justify-between items-center gap-2 bg-slate-950 mt-8">
+  <footer class="border-t border-slate-800 px-6 py-4 text-xs text-slate-400 flex flex-col md:flex-row justify-between items-center gap-2 bg-slate-950 mt-12">
     <div>YUKTIK ’26 · Department of CSE (AI&ML), Keshav Memorial Institute of Technology (KMIT), Hyderabad</div>
-    <div class="font-mono">Team: <strong class="text-white">WARRIORS</strong> · Problem Statement: <strong class="text-cyan-400 font-bold">PS11</strong> · Evaluator: <strong class="text-amber-400">Varsha</strong></div>
+    <div class="font-mono">Team: <strong class="text-white">WARRIORS</strong> · Problem Statement: <strong class="text-cyan-400 font-bold">PS11</strong></div>
   </footer>
 
-  <!-- ================= MODAL: 2-MINUTE GUIDED JURY TOUR ================= -->
-  <div id="pitch-tour-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="card-dark w-full max-w-xl p-6 rounded-3xl border-2 border-amber-500 shadow-2xl space-y-4 relative">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2 font-mono">
-          <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black" id="pitch-step-counter">STEP 1 OF 4</span>
-          <span class="text-xs text-slate-400">YUKTIK ’26 · 2-MIN EVALUATOR WALKTHROUGH</span>
-        </div>
-        <button onclick="closePitchTour()" class="text-slate-400 hover:text-white font-mono text-sm">✕ Close</button>
-      </div>
-
-      <!-- Progress Bar -->
-      <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-        <div id="pitch-progress-bar" class="bg-amber-500 h-1.5 transition-all duration-300" style="width: 25%"></div>
-      </div>
-
-      <div class="space-y-2 py-2">
-        <h3 id="pitch-step-title" class="text-lg font-black text-white"></h3>
-        <p id="pitch-step-desc" class="text-xs text-slate-300 leading-relaxed font-sans"></p>
-      </div>
-
-      <div class="flex justify-between items-center pt-2 border-t border-slate-800 font-mono text-xs">
-        <button onclick="prevPitchStep()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">
-          ← Previous
-        </button>
-        <button onclick="nextPitchStep()" id="pitch-btn-next" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black shadow-lg shadow-amber-500/20">
-          Next Step →
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= MODAL: POLICE FIR / CERT-IN DISPATCH ================= -->
-  <div id="dispatch-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-slate-950 text-slate-100 w-full max-w-3xl p-6 rounded-3xl border border-red-800 shadow-2xl space-y-5 my-8">
-      
-      <!-- Dispatch Header -->
-      <div class="flex justify-between items-start border-b border-red-900/60 pb-4">
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800 text-[10px] font-mono font-bold">CYBER CRIME POLICE STATION · DISPATCH</span>
-            <span class="text-xs font-mono text-slate-400">REF: FIR-2026-TS-0911-CIB</span>
-          </div>
-          <h2 class="text-xl font-black text-white mt-1">FORENSIC INTELLIGENCE DISPATCH DOSSIER</h2>
-          <p class="text-xs text-slate-400">Actionable Evidentiary Chain-of-Custody for Coordinated Misinformation Incident</p>
-        </div>
-        <button onclick="closeDispatchModal()" class="text-slate-400 hover:text-white font-mono text-sm px-2 py-1">✕</button>
-      </div>
-
-      <!-- Case Details -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-        <div><span class="text-slate-400 block">Incident Ref:</span><strong id="fir-incident-title">Dam Collapse Hoax</strong></div>
-        <div><span class="text-slate-400 block">Severity:</span><strong class="text-red-400">Class-A Panic</strong></div>
-        <div><span class="text-slate-400 block">Verdict:</span><strong class="text-red-400" id="fir-verdict">CONTRADICTED</strong></div>
-        <div><span class="text-slate-400 block">Primary Target:</span><strong class="text-amber-400">@hyd_disaster_alert</strong></div>
-      </div>
-
-      <!-- Forensic Evidence Matrix -->
-      <div class="space-y-2 text-xs font-mono">
-        <h4 class="font-bold text-white uppercase text-[11px] text-slate-400">Digital Forensics Evidence & Hashes</h4>
-        <div class="space-y-1.5 p-3 rounded-xl bg-slate-900 border border-slate-800" id="fir-evidence-list">
-          <div>• <strong>Audio Impersonation:</strong> Cloned voice of District Collector (Wav2Vec2: 100% synthetic confidence; lack of micro-tremor variance).</div>
-          <div>• <strong>Image Tampering:</strong> Recycled 2018 Kerala Flood visual falsely depicted as current Nagarjuna Sagar breach (dHash 97.1% match).</div>
-          <div>• <strong>Video Discontinuity:</strong> Manipulated facial landmark sequences on public official statement.</div>
-          <div>• <strong>Factual Contradiction:</strong> Central Water Commission certified dam reservoir safe at 44.2% capacity.</div>
-        </div>
-      </div>
-
-      <!-- Target Accounts for Section 69A IT Act Takedown -->
-      <div class="space-y-2 text-xs font-mono">
-        <h4 class="font-bold text-white uppercase text-[11px] text-red-400">Identified Syndicate Accounts (Subpoena Targets)</h4>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <div class="p-2 rounded-lg bg-red-950/40 border border-red-900 text-[11px]">@hyd_disaster_alert (0.94 bot)</div>
-          <div class="p-2 rounded-lg bg-red-950/40 border border-red-900 text-[11px]">@telugu_breaking_fast (0.91 bot)</div>
-          <div class="p-2 rounded-lg bg-red-950/40 border border-red-900 text-[11px]">@city_emergency_voice (0.88 bot)</div>
-          <div class="p-2 rounded-lg bg-red-950/40 border border-red-900 text-[11px]">@floods_live_india (0.85 bot)</div>
-        </div>
-      </div>
-
-      <!-- Recommended Action -->
-      <div class="p-3 bg-emerald-950/30 border border-emerald-800 rounded-xl text-xs space-y-1 text-slate-300">
-        <strong class="text-emerald-400 block text-xs">Immediate Mitigation Directives:</strong>
-        <p>1. Issue Emergency Broadcast SMS via State Disaster Management Authority (SDMA) confirming dam safety.</p>
-        <p>2. Transmit Section 69A IT Act emergency takedown requests for the 4 identified amplifier accounts.</p>
-      </div>
-
-      <div class="flex justify-between items-center pt-2 border-t border-slate-800">
-        <span class="text-[11px] text-slate-400 font-mono">Generated by Team WARRIORS · Yuktik '26 PS11</span>
-        <div class="flex gap-2">
-          <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs">
-            🖨️ Print / Save PDF
-          </button>
-          <button onclick="closeDispatchModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs">
-            Done
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ================= SCRIPTS & APPLICATION LOGIC ================= -->
+  <!-- ================= JAVASCRIPT ================= -->
   <script>
     let networkGraph = null;
-    let radarChart = null;
-    let audioAnimFrame = null;
-    let activeScenario = 'dam';
 
-    // ── INITIALIZE APPLICATION ──────────────────────────────────────────
-    window.addEventListener('DOMContentLoaded', () => {
-      initRadarChart();
-      loadNetworkGraph();
-      setupSlider();
-      initAudioCanvas();
-      startTickerRotation();
-    });
-
-    // ── RADAR CHART (CHART.JS) ──────────────────────────────────────────
-    function initRadarChart() {
-      const ctx = document.getElementById('radarChart').getContext('2d');
-      radarChart = new Chart(ctx, {
-        type: 'radar',
-        data: {
-          labels: ['Audio Vocoder', 'Vision Splicing', 'Video Landmark', 'Text NLI RAG', 'Bot Syndicate'],
-          datasets: [{
-            label: 'Threat Severity',
-            data: [1.0, 0.97, 0.69, 0.94, 0.92],
-            backgroundColor: 'rgba(239, 68, 68, 0.25)',
-            borderColor: '#ef4444',
-            pointBackgroundColor: '#f87171',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: '#ef4444'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            r: {
-              angleLines: { color: 'rgba(51, 65, 85, 0.5)' },
-              grid: { color: 'rgba(51, 65, 85, 0.5)' },
-              pointLabels: { color: '#94a3b8', font: { size: 10, family: 'Inter' } },
-              ticks: { display: false, min: 0, max: 1 }
-            }
-          },
-          plugins: {
-            legend: { display: false }
-          }
-        }
-      });
-    }
-
-    function updateRadarChart(scores) {
-      if (!radarChart) return;
-      radarChart.data.datasets[0].data = scores;
-      radarChart.update();
-    }
-
-    // ── INTERACTIVE BEFORE/AFTER SLIDER ─────────────────────────────────
-    function setupSlider() {
-      setSliderPosition(50);
-    }
-
-    function handleSliderMove(e) {
-      if (e.buttons !== 1) return;
-      const rect = e.currentTarget.getBoundingClientRect();
-      const pos = ((e.clientX - rect.left) / rect.width) * 100;
-      setSliderPosition(pos);
-    }
-
-    function handleSliderTouch(e) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const touch = e.touches[0];
-      const pos = ((touch.clientX - rect.left) / rect.width) * 100;
-      setSliderPosition(pos);
-    }
-
-    function setSliderPosition(pos) {
-      pos = Math.max(0, Math.min(100, pos));
-      document.getElementById('slider-top-wrap').style.width = pos + '%';
-      document.getElementById('slider-divider').style.left = pos + '%';
-    }
-
-    // ── SCENARIO SWITCHER (DAM vs TAJ MAHAL vs CUSTOM) ───────────────────
-    async function loadScenario(scen) {
-      activeScenario = scen;
-      ['dam', 'taj', 'custom'].forEach(s => {
-        const btn = document.getElementById(`btn-scen-${s}`);
-        if (s === scen) {
-          btn.className = "px-3.5 py-1.5 rounded-xl bg-cyan-600 text-white shadow-lg shadow-cyan-600/30 flex items-center gap-1.5 transition-all";
-        } else {
-          btn.className = "px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-all";
-        }
-      });
-
-      if (scen === 'dam') {
-        // SCENARIO 1: DAM COLLAPSE HOAX
-        document.getElementById('hero-badge').innerText = "CRITICAL DISINFORMATION CAMPAIGN REFUTED";
-        document.getElementById('hero-title').innerText = "Dam Collapse Evacuation Hoax · 100% Coordinated Fabrication";
-        document.getElementById('hero-narrative').innerText = "A high-velocity viral campaign deployed an AI-cloned emergency evacuation voice note of the District Collector, combined with a reused August 2018 Kerala flood photo, targeting panic across Hyderabad. Multi-modal correlation confirms all official sensors and telemetry remain in 100% normal operating range.";
-        document.getElementById('hero-confidence').innerText = "96.4%";
-        
-        // Slider images
-        document.getElementById('slider-bottom-img').src = "/data/kerala_flood_reused_photo.jpg";
-        document.getElementById('slider-top-img').src = "/data/kerala_flood_ela.jpg";
-        document.getElementById('image-panel-title').innerText = "Dam Splicing Forensics: Reused 2018 Flood vs ELA Mask";
-        document.getElementById('image-phash-display').innerText = "pHash: 8b3c... (Hamming dH: 2 bits to PTI 2018 archive)";
-        document.getElementById('img-engine-badge').innerText = "REUSED PTI ARCHIVE MATCH (97.1%)";
-        document.getElementById('img-engine-desc').innerText = "Perceptual dHash matches August 2018 Kerala Flood archive photograph (2-bit Hamming distance). Error Level Analysis highlights identical high-frequency compression boundaries.";
-
-        // Scorecards
-        document.getElementById('card-audio-score').innerText = "100.0% SYNTHETIC";
-        document.getElementById('card-image-score').innerText = "97.1% REUSED";
-        document.getElementById('card-video-score').innerText = "69.0% MANIPULATED";
-        document.getElementById('card-text-score').innerText = "CONTRADICTED";
-        document.getElementById('card-bot-score').innerText = "Q=0.68 MODULARITY";
-
-        updateRadarChart([1.0, 0.97, 0.69, 0.94, 0.92]);
-        loadNetworkGraph();
-
-      } else if (scen === 'taj') {
-        // SCENARIO 2: TAJ MAHAL AI COLLAPSE HOAX
-        document.getElementById('hero-badge').innerText = "NATIONAL HERITAGE DEFENSE ALERT REFUTED";
-        document.getElementById('hero-title').innerText = "Taj Mahal Collapse AI Hoax · Generative Diffusion Fabrication";
-        document.getElementById('hero-narrative').innerText = "A viral fake breaking-news graphic depicted the Taj Mahal collapsed dome with fake TV tickers ('Authorities on High Alert'). Vision Transformer flags generative diffusion textures (98.8%), while Archaeological Survey of India (ASI) optical sensors confirm monument is 100% intact.";
-        document.getElementById('hero-confidence').innerText = "95.6%";
-
-        // Slider images: Fake collapsed vs Real intact
-        document.getElementById('slider-bottom-img').src = "/data/fake_taj_mahal_collapse.jpg";
-        document.getElementById('slider-top-img').src = "/data/real_taj_mahal.jpg";
-        document.getElementById('image-panel-title').innerText = "Monument Forensics: Fake AI Graphic vs Real Intact Monument";
-        document.getElementById('image-phash-display').innerText = "AI pHash: c0b61d40... vs Real pHash: c3e35ca0... (Hamming dH: 27 bits)";
-        document.getElementById('img-engine-badge').innerText = "AI-GENERATED IMAGE (98.8%)";
-        document.getElementById('img-engine-desc').innerText = "Vision Transformer (dima806/ai_vs_real_image_detection) identified synthetic diffusion textures and generative rendering artifacts. Perceptual hash mismatch (dH=27 bits) against certified intact ASI archive.";
-
-        // Scorecards
-        document.getElementById('card-audio-score').innerText = "92.0% SYNTHETIC ALERT";
-        document.getElementById('card-image-score').innerText = "98.8% AI DIFFUSION";
-        document.getElementById('card-video-score').innerText = "72.0% SYNTHETIC";
-        document.getElementById('card-text-score').innerText = "CONTRADICTED (ASI)";
-        document.getElementById('card-bot-score').innerText = "Q=0.71 MODULARITY";
-
-        updateRadarChart([0.92, 0.988, 0.72, 0.96, 0.89]);
-        loadNetworkGraph();
-
-      } else if (scen === 'custom') {
-        switchTestTab('image');
-      }
-    }
-
-    // ── MODALITY TAB SWITCHER ───────────────────────────────────────────
+    // Switch Modality Tab
     function switchTestTab(tab) {
-      ['image', 'audio', 'video', 'text'].forEach(t => {
+      ['audio', 'image', 'video', 'text', 'combo'].forEach(t => {
         document.getElementById(`test-panel-${t}`).classList.add('hidden');
         const b = document.getElementById(`tab-btn-${t}`);
-        b.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200";
+        b.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-slate-200";
       });
       document.getElementById(`test-panel-${tab}`).classList.remove('hidden');
       const activeBtn = document.getElementById(`tab-btn-${tab}`);
-      activeBtn.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow";
+      activeBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-cyan-600 text-white shadow";
+
+      if (tab === 'combo') {
+        runScenarioBenchmark();
+      }
     }
 
-    // ── PRELOADED MEDIA TESTER ──────────────────────────────────────────
+    // Pre-loaded Media Testing
     async function testPreloadedMedia(type, customUrl, customFilename) {
       let url = customUrl || '';
       let filename = customFilename || '';
       let mediaType = type;
-
       if (!url) {
         if (type === 'audio') {
           url = '/data/collector_evacuation_voice_clone.wav';
           filename = 'collector_evacuation_voice_clone.wav';
         } else if (type === 'image') {
-          url = '/data/kerala_flood_reused_photo.jpg';
-          filename = 'kerala_flood_reused_photo.jpg';
+          url = '/data/ai_generated_synthetic_image.jpg';
+          filename = 'ai_generated_synthetic_image.jpg';
         } else if (type === 'video') {
           url = '/data/official_announcement_fake.mp4';
           filename = 'official_announcement_fake.mp4';
         }
       }
-
       if (type === 'audio') {
         const a = document.getElementById('audio-player-sample');
         if (a) {
@@ -1018,19 +529,26 @@
     function renderAnalysisResult(d, filename, mediaType) {
       const isAuth = d.verdict === 'authentic';
       const badgeClass = isAuth ? 'badge-real' : 'badge-fake';
+      const engineName = d.metrics?.model_engine || (mediaType === 'audio' ? 'Wav2Vec2 (MelodyMachine/Deepfake-audio-detection-V2)' : (mediaType === 'video' ? 'Vision Transformer (dima806/ai_vs_real_image_detection)' : 'Vision Transformer + dHash'));
 
       if (mediaType === 'image') {
         const box = document.getElementById('image-result-box');
+        const imgUrl = (filename.startsWith('http') || filename.startsWith('/data/')) ? filename : `/data/${filename}`;
         box.innerHTML = `
           <div class="flex justify-between items-center">
-            <span class="text-slate-400">ANALYZED: ${filename}</span>
+            <span class="text-xs font-mono font-bold text-slate-400">ANALYZED: ${filename}</span>
             <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold ${badgeClass}">
               ${d.verdict.toUpperCase()} (${(d.confidence*100).toFixed(1)}%)
             </span>
           </div>
-          <p class="text-slate-300 font-sans text-xs mt-1 leading-relaxed">${d.explanation}</p>
-          <div class="text-[10px] text-cyan-400 font-mono flex justify-between pt-1 border-t border-slate-800">
-            <span>Model: Pre-trained ViT / dHash</span>
+          <div class="my-2 flex justify-center">
+            <img src="${imgUrl}" class="h-28 w-auto object-contain rounded-xl border border-slate-700" onerror="this.style.display='none'">
+          </div>
+          <div class="text-xs text-slate-300 font-sans leading-relaxed p-3 bg-slate-900 rounded-xl border border-slate-800">
+            ${d.explanation}
+          </div>
+          <div class="text-[11px] text-cyan-400 font-mono flex justify-between">
+            <span>Model: Pre-trained ViT (dima806/ai_vs_real_image_detection)</span>
             <span>⚡ ${d.processing_time_ms} ms</span>
           </div>
         `;
@@ -1038,20 +556,40 @@
         const box = document.getElementById('audio-result-box');
         box.innerHTML = `
           <div class="flex justify-between items-center">
-            <span class="text-slate-400">ANALYZED: ${filename}</span>
+            <span class="text-xs font-mono font-bold text-slate-400">ANALYZED: ${filename}</span>
             <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold ${badgeClass}">
               ${d.verdict.toUpperCase()} (${(d.confidence*100).toFixed(1)}%)
             </span>
           </div>
-          <p class="text-slate-300 font-sans text-xs mt-1 leading-relaxed">${d.explanation}</p>
-          <div class="text-[10px] text-cyan-400 font-mono flex justify-between pt-1 border-t border-slate-800">
-            <span>Model: Pre-trained Wav2Vec 2.0</span>
+          <div class="text-xs text-slate-300 font-sans leading-relaxed p-3 bg-slate-900 rounded-xl border border-slate-800">
+            ${d.explanation}
+          </div>
+          <div class="text-[11px] text-cyan-400 font-mono flex justify-between">
+            <span>Model: Pre-trained Wav2Vec2 (MelodyMachine/Deepfake-audio-detection-V2)</span>
+            <span>⚡ ${d.processing_time_ms} ms</span>
+          </div>
+        `;
+      } else if (mediaType === 'video') {
+        const box = document.getElementById('video-result-box');
+        box.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-mono font-bold text-slate-400">ANALYZED: ${filename}</span>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold ${badgeClass}">
+              ${d.verdict.toUpperCase()} (${(d.confidence*100).toFixed(1)}%)
+            </span>
+          </div>
+          <div class="text-xs text-slate-300 font-sans leading-relaxed p-3 bg-slate-900 rounded-xl border border-slate-800">
+            ${d.explanation}
+          </div>
+          <div class="text-[11px] text-cyan-400 font-mono flex justify-between">
+            <span>Model: ViT Per-Frame Sequence + Temporal Cascade</span>
             <span>⚡ ${d.processing_time_ms} ms</span>
           </div>
         `;
       }
     }
 
+    // Upload & Analyze User File
     async function uploadAndAnalyze(event, mediaType) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1069,7 +607,7 @@
       }
     }
 
-    // ── LIVE CLAIM VERIFIER (NLI) ───────────────────────────────────────
+    // Live Claim Test
     function setClaimInput(text) {
       document.getElementById('live-claim-input').value = text;
       verifyLiveClaim();
@@ -1099,176 +637,101 @@
         badge.innerText = `${d.verdict.toUpperCase()} (${(d.confidence*100).toFixed(1)}%)`;
 
         const desc = document.getElementById('live-claim-desc');
-        let langInfo = d.detected_language ? `[Language: ${d.detected_language.toUpperCase()}] ` : '';
+        let langInfo = d.detected_language ? `[Language: ${d.detected_language}] ` : '';
         desc.innerText = langInfo + d.explanation;
       } catch (e) {
-        alert("Claim verification error: " + e);
+        alert("Error: " + e);
       }
     }
 
-    // ── RUN FULL BENCHMARK RERUN ────────────────────────────────────────
+    // Benchmark Runner (Combo)
     async function runScenarioBenchmark() {
-      const btn = document.getElementById('btn-hero-rerun');
-      if (btn) btn.innerHTML = "<span>⏳ Analyzing 5 Models...</span>";
-      
-      const endpoint = (activeScenario === 'taj') ? '/api/v1/incident/scenario-taj' : '/api/v1/incident/scenario-demo';
-
+      const btn = document.getElementById('btn-run-combo');
+      if (btn) btn.innerHTML = "<span>⏳ Analyzing All 5 Engines...</span>";
       try {
-        const res = await fetch(endpoint);
+        const res = await fetch('/api/v1/incident/scenario-demo');
         const data = await res.json();
-        const ci = data.correlated_intelligence;
+        
+        const resContainer = document.getElementById('combo-result-container');
+        if (resContainer) resContainer.classList.remove('hidden');
 
-        if (ci) {
-          document.getElementById('hero-confidence').innerText = (ci.overall_confidence * 100).toFixed(1) + '%';
-          document.getElementById('hero-narrative').innerText = ci.narrative_summary || ci.explainable_summary;
+        const conf = data.correlated_intelligence?.overall_confidence;
+        if (conf) {
+          document.getElementById('combo-overall-confidence').innerText = (conf * 100).toFixed(1) + '%';
         }
-        loadNetworkGraph();
+        if (data.correlated_intelligence?.narrative_summary) {
+          document.getElementById('combo-narrative-summary').innerText = data.correlated_intelligence.narrative_summary;
+        }
+
+        loadComboNetworkGraph();
       } catch (e) {
-        console.error(e);
+        console.error("Benchmark error:", e);
       } finally {
-        if (btn) btn.innerHTML = "<span>⚡ Re-Analyze All Modalities</span>";
+        if (btn) btn.innerHTML = "<span>⚡ Re-Run All 5 Engines</span>";
       }
     }
 
-    // ── VIS.JS BOT NETWORK GRAPH ────────────────────────────────────────
-    async function loadNetworkGraph() {
+    // Network Graph for Combo Canvas
+    let comboNetworkGraph = null;
+    async function loadComboNetworkGraph() {
       try {
         const res = await fetch('/api/v1/network/scenario');
         const data = await res.json();
-        const container = document.getElementById('network-canvas');
+        const container = document.getElementById('combo-network-canvas');
         if (!container) return;
 
         const nodes = data.nodes.map(n => ({
           id: n.id,
           label: n.label,
           color: n.id.includes('alert') ? '#f43f5e' : (n.id.includes('telugu') ? '#10b981' : '#8b5cf6'),
-          font: { color: '#f8fafc', size: 10, face: 'monospace' },
+          font: { color: '#f8fafc', size: 11, face: 'monospace' },
           shape: 'dot',
-          size: 14
+          size: 16
         }));
 
         const edges = data.edges.map(e => ({
           from: e.source,
           to: e.target,
-          color: { color: '#334155', highlight: '#38bdf8' }
+          color: { color: '#334155' }
+        }));
+
+        if (comboNetworkGraph) comboNetworkGraph.destroy();
+        comboNetworkGraph = new vis.Network(container, { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) }, {
+          physics: { stabilization: true }
+        });
+      } catch (e) {}
+    }
+
+    // Network Graph for Technical Inspector
+    async function loadNetworkGraph() {
+      try {
+        const res = await fetch('/api/v1/network/scenario');
+        const data = await res.json();
+        const container = document.getElementById('network-canvas');
+
+        const nodes = data.nodes.map(n => ({
+          id: n.id,
+          label: n.label,
+          color: n.id.includes('alert') ? '#f43f5e' : (n.id.includes('telugu') ? '#10b981' : '#8b5cf6'),
+          font: { color: '#f8fafc', size: 11, face: 'monospace' },
+          shape: 'dot',
+          size: 16
+        }));
+
+        const edges = data.edges.map(e => ({
+          from: e.source,
+          to: e.target,
+          color: { color: '#334155' }
         }));
 
         if (networkGraph) networkGraph.destroy();
         networkGraph = new vis.Network(container, { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) }, {
-          physics: { stabilization: true },
-          interaction: { hover: true }
+          physics: { stabilization: true }
         });
-
-        networkGraph.on('click', function(params) {
-          if (params.nodes.length > 0) {
-            const nodeId = params.nodes[0];
-            const node = data.nodes.find(n => n.id === nodeId);
-            if (node) {
-              document.getElementById('inspect-node-id').innerText = '@' + node.label;
-              document.getElementById('node-inspector-panel').innerHTML = `
-                <div class="flex justify-between">
-                  <span class="text-slate-400">ACTIVE TARGET:</span>
-                  <strong class="text-amber-400">@${node.label}</strong>
-                </div>
-                <div class="text-[11px] text-slate-300">
-                  • Bot Probability: <strong class="text-red-400">${(node.bot_probability || 0.92).toFixed(2)}</strong> · Retweets: <strong>${node.retweet_count || 38}</strong> · Burst: <strong>&Delta;t &le; 180s</strong>
-                </div>
-              `;
-            }
-          }
-        });
-
       } catch (e) {}
     }
 
-    // ── CANVAS AUDIO VISUALIZER ─────────────────────────────────────────
-    let canvas, ctx;
-    function initAudioCanvas() {
-      canvas = document.getElementById('audio-canvas');
-      if (!canvas) return;
-      ctx = canvas.getContext('2d');
-      drawIdleWave();
-    }
-
-    function drawIdleWave() {
-      if (!canvas || !ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = '#0284c7';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      const mid = canvas.height / 2;
-      for (let x = 0; x < canvas.width; x++) {
-        const y = mid + Math.sin(x * 0.05) * 4;
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-    }
-
-    let isPlaying = false;
-    let wavePhase = 0;
-    function startVisualizer() {
-      isPlaying = true;
-      document.getElementById('audio-status-label').innerText = "Analyzing Vocoder Spectrogram...";
-      document.getElementById('audio-status-label').className = "text-red-400 font-bold animate-pulse";
-      animateWave();
-    }
-
-    function stopVisualizer() {
-      isPlaying = false;
-      document.getElementById('audio-status-label').innerText = "Playback Paused";
-      document.getElementById('audio-status-label').className = "text-slate-400";
-      if (audioAnimFrame) cancelAnimationFrame(audioAnimFrame);
-      drawIdleWave();
-    }
-
-    function animateWave() {
-      if (!isPlaying) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw waveform bars
-      const numBars = 45;
-      const barWidth = canvas.width / numBars;
-      for (let i = 0; i < numBars; i++) {
-        const freqRatio = i / numBars;
-        let barHeight = (Math.sin(wavePhase + i * 0.4) * 0.5 + 0.5) * 35;
-        // Vocoder cutoff simulation: plateau around 4-8 kHz
-        if (freqRatio > 0.6) {
-          barHeight = 28 + Math.random() * 4; // Unnatural flat plateau!
-          ctx.fillStyle = '#f59e0b';
-        } else {
-          ctx.fillStyle = '#06b6d4';
-        }
-        ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 2, barHeight);
-      }
-
-      wavePhase += 0.12;
-      audioAnimFrame = requestAnimationFrame(animateWave);
-    }
-
-    // ── LIVE TICKER ROTATION ────────────────────────────────────────────
-    const tickerItems = [
-      "[14:15:02] CWC Central Water Commission: Nagarjuna Sagar reservoir level 534.80 ft (44.2% safe capacity) · All spillway crest gates closed.",
-      "[14:15:18] Archaeological Survey of India (ASI): Taj Mahal structural monitoring sensors confirm dome 100% intact.",
-      "[14:15:35] Twitter/X Live Ingestion: Synthetic tweet cluster detected (&Delta;t &le; 180s) from 7 coordinated accounts.",
-      "[14:15:52] Local Police Cyber Cell: FIR dispatch auto-transmitted under Section 69A IT Act."
-    ];
-    let tickerIdx = 0;
-    function startTickerRotation() {
-      setInterval(() => {
-        tickerIdx = (tickerIdx + 1) % tickerItems.length;
-        const el = document.getElementById('ticker-content');
-        if (el) {
-          el.style.opacity = '0';
-          setTimeout(() => {
-            el.innerText = tickerItems[tickerIdx];
-            el.style.opacity = '1';
-          }, 300);
-        }
-      }, 5000);
-    }
-
-    // ── POLICE FIR DISPATCH MODAL ───────────────────────────────────────
+    // ================= POLICE FIR / CERT-IN DISPATCH MODAL =================
     function openDispatchModal() {
       document.getElementById('dispatch-modal').classList.remove('hidden');
     }
@@ -1276,35 +739,36 @@
       document.getElementById('dispatch-modal').classList.add('hidden');
     }
 
-    // ── 2-MINUTE GUIDED JURY TOUR ───────────────────────────────────────
+    // ================= 2-MINUTE GUIDED JUDGE PITCH TOUR =================
     const pitchSteps = [
       {
         step: 1,
-        title: "Step 1: The Coordinated Panic Attack",
-        desc: "At 10:00 AM, a multi-vector attack strikes social media. An AI-cloned evacuation voice note of the District Collector spreads alongside a recycled disaster photo in English, Hindi, and Telugu, engineered to spark stampedes.",
-        action: () => loadScenario('dam')
+        title: "Step 1: 10:00 AM Dam Disaster Hoax Attack",
+        desc: "A coordinated multi-channel attack hits social media claiming a major dam near Hyderabad collapsed. The attacker distributes a fake audio note from the District Collector, an archived flood photo, and posts across English, Hindi, and Telugu.",
+        action: () => switchTestTab('audio')
       },
       {
         step: 2,
-        title: "Step 2: Wav2Vec 2.0 & FFT Acoustic Forensics",
-        desc: "In 24 milliseconds, our pre-trained Wav2Vec 2.0 neural acoustic model flags the voice as 100% SYNTHETIC. Subband FFT spectral flatness isolates the 4-8 kHz neural vocoder hiss, proving mathematical lack of human micro-tremor.",
-        action: () => { switchTestTab('audio'); testPreloadedMedia('audio'); }
+        title: "Step 2: Wav2Vec2 Neural Audio Detection",
+        desc: "Our platform ingests the audio note. The pre-trained Wav2Vec 2.0 neural model flags it as 100% SYNTHETIC VOICE CLONE in 24 ms. Subband FFT spectral flatness confirms neural vocoder artifacts.",
+        action: () => testPreloadedMedia('audio')
       },
       {
         step: 3,
         title: "Step 3: Vision Transformer & dHash Archive Match",
-        desc: "The circulating flood visual is scanned. Our 64-bit perceptual dHash matches the August 2018 Kerala Flood archive with a 2-bit Hamming distance (97.1% match), while Error Level Analysis reveals spliced compression boundaries.",
+        desc: "The circulating flood photo is analyzed. Vision Transformer detects synthetic artifacts, while perceptual 64-bit dHash matches the August 2018 Kerala flood archive with 97.1% similarity.",
         action: () => { switchTestTab('image'); testPreloadedMedia('image'); }
       },
       {
         step: 4,
-        title: "Step 4: Bot Syndicate Isolation & Police FIR",
-        desc: "CWC telemetry confirms water capacity is safe at 44.2%. Louvain graph clustering isolates all 7 bot accounts (&Delta;t &le; 180s) and generates an automated Section 69A IT Act Police FIR Dossier for emergency legal takedown.",
-        action: () => openDispatchModal()
+        title: "Step 4: Cross-Modal Contradiction & Bot Ring Isolated",
+        desc: "The Central Water Commission RAG confirms reservoir capacity is safe at 44.2%. Louvain graph clustering isolates the 7 coordinated bot accounts (&Delta;t &le; 180s) and generates an actionable Police FIR dispatch.",
+        action: () => { switchTestTab('combo'); runScenarioBenchmark(); }
       }
     ];
 
     let currentPitchIndex = 0;
+
     function startJudgePitchTour() {
       currentPitchIndex = 0;
       document.getElementById('pitch-tour-modal').classList.remove('hidden');
@@ -1349,5 +813,106 @@
       document.getElementById('pitch-tour-modal').classList.add('hidden');
     }
   </script>
+
+  <!-- ================= MODAL: 2-MINUTE JUDGE PITCH TOUR ================= -->
+  <div id="pitch-tour-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-dark w-full max-w-xl p-6 rounded-3xl border-2 border-amber-500 shadow-2xl space-y-4 relative">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black" id="pitch-step-counter">STEP 1 OF 4</span>
+          <span class="text-xs font-mono text-slate-400">YUKTIK ’26 · 2-MIN JURY WALKTHROUGH</span>
+        </div>
+        <button onclick="closePitchTour()" class="text-slate-400 hover:text-white font-mono text-sm">✕ Close</button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+        <div id="pitch-progress-bar" class="bg-amber-500 h-1.5 transition-all duration-300" style="width: 25%"></div>
+      </div>
+
+      <div class="space-y-2 py-2">
+        <h3 id="pitch-step-title" class="text-lg font-black text-white"></h3>
+        <p id="pitch-step-desc" class="text-xs text-slate-300 leading-relaxed"></p>
+      </div>
+
+      <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+        <button onclick="prevPitchStep()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">
+          ← Previous
+        </button>
+        <button onclick="nextPitchStep()" id="pitch-btn-next" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20">
+          Next Step →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: POLICE FIR / CERT-IN DISPATCH ================= -->
+  <div id="dispatch-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-slate-950 text-slate-100 w-full max-w-3xl p-6 rounded-3xl border border-red-800 shadow-2xl space-y-5 my-8">
+      
+      <!-- Dispatch Header -->
+      <div class="flex justify-between items-start border-b border-red-900/60 pb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800 text-[10px] font-mono font-bold">CYBER CRIME POLICE STATION · DISPATCH</span>
+            <span class="text-xs font-mono text-slate-400">REF: FIR-2026-TS-0911-CIB</span>
+          </div>
+          <h2 class="text-xl font-black text-white mt-1">FORENSIC INTELLIGENCE DISPATCH BRIEF</h2>
+          <p class="text-xs text-slate-400">Actionable Evidence Dossier for Coordinated Disaster Misinformation Incident</p>
+        </div>
+        <button onclick="closeDispatchModal()" class="text-slate-400 hover:text-white font-mono text-sm px-2 py-1">✕</button>
+      </div>
+
+      <!-- Case Details -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+        <div><span class="text-slate-400 block">Incident Title:</span><strong>Dam Collapse Hoax</strong></div>
+        <div><span class="text-slate-400 block">Classification:</span><strong class="text-red-400">Class-A Public Panic</strong></div>
+        <div><span class="text-slate-400 block">Overall Verdict:</span><strong class="text-red-400">CONTRADICTED (100%)</strong></div>
+        <div><span class="text-slate-400 block">Lead Target:</span><strong class="text-amber-400">@hyd_disaster_alert</strong></div>
+      </div>
+
+      <!-- Forensic Evidence Matrix -->
+      <div class="space-y-2 text-xs font-mono">
+        <h4 class="font-bold text-white uppercase text-[11px] text-slate-400">Digital Forensics Chain-of-Custody</h4>
+        <div class="space-y-1.5 p-3 rounded-xl bg-slate-900 border border-slate-800">
+          <div>• <strong>Audio Impersonation:</strong> Cloned voice of District Collector (Wav2Vec2: 100% synthetic confidence; lack of micro-tremor variance).</div>
+          <div>• <strong>Image Tampering:</strong> Recycled 2018 Kerala Flood visual falsely depicted as current Nagarjuna Sagar breach (dHash 97.1% match).</div>
+          <div>• <strong>Video Artifacts:</strong> Manipulated facial landmark sequences on public official statement.</div>
+          <div>• <strong>Factual Contradiction:</strong> Central Water Commission certified dam reservoir safe at 44.2% capacity.</div>
+        </div>
+      </div>
+
+      <!-- Target Accounts for Section 69A IT Act Takedown -->
+      <div class="space-y-2 text-xs font-mono">
+        <h4 class="font-bold text-white uppercase text-[11px] text-red-400">Identified Syndicate Accounts (Subpoena Targets)</h4>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div class="p-2 rounded-lg bg-red-950/40 border border-red-900 text-[11px]">@hyd_disaster_alert (0.94 bot)</div>
+          <div class="p-2 rounded-lg bg-red-950/40 border border-red-900 text-[11px]">@telugu_breaking_fast (0.91 bot)</div>
+          <div class="p-2 rounded-lg bg-red-950/40 border border-red-900 text-[11px]">@city_emergency_voice (0.88 bot)</div>
+          <div class="p-2 rounded-lg bg-red-950/40 border border-red-900 text-[11px]">@floods_live_india (0.85 bot)</div>
+        </div>
+      </div>
+
+      <!-- Recommended Action -->
+      <div class="p-3 bg-emerald-950/30 border border-emerald-800 rounded-xl text-xs space-y-1 text-slate-300">
+        <strong class="text-emerald-400 block text-xs">Immediate Mitigation Directives:</strong>
+        <p>1. Issue Emergency Broadcast SMS via State Disaster Management Authority (SDMA) confirming dam safety.</p>
+        <p>2. Transmit Section 69A IT Act emergency takedown requests for the 4 identified amplifier accounts.</p>
+      </div>
+
+      <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+        <span class="text-[11px] text-slate-400 font-mono">Generated by Team WARRIORS · Yuktik '26 PS11</span>
+        <div class="flex gap-2">
+          <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs">
+            🖨️ Print / Save PDF
+          </button>
+          <button onclick="closeDispatchModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs">
+            Done
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </body>
 </html>
