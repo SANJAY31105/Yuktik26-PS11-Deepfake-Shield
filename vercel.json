@@ -1,9 +1,3 @@
 {
-  "version": 2,
-  "public": true,
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/dashboard", "destination": "/index.html" },
-    { "source": "/guide", "destination": "/backend/static/team_guide.html" }
-  ]
+  "cleanUrls": true
 }
